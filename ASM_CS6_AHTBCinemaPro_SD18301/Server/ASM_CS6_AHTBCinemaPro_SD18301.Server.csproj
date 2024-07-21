@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="5.0.17" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Client\ASM_CS6_AHTBCinemaPro_SD18301.Client.csproj" />
+    <ProjectReference Include="..\Shared\ASM_CS6_AHTBCinemaPro_SD18301.Shared.csproj" />
+  </ItemGroup>
+
+
+</Project>
