@@ -2,32 +2,38 @@
 @{
 }
 
-<style>
-    body{
-        background: url(/Image/background/gioithieu1.jpg) no-repeat center /cover;
-    }
-
-    .item {
-        box-shadow:none;
-    }
-
-    .footer.section {
-        margin-top: -30px;
-    }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Bootstrap Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+        .carousel-inner img {
+            width: 100%; /* Set width to 100% */
+            margin: auto;
+            min-height: 200px;
+        }
     
-</style>
+    </style>
+</head>
 <body>
     <div id="myCarousel" class="carousel slide" data-ride="carousel">
-        <div class="carousel-inner item active" role="listbox">
-            <div class="carousel-caption">
-                <h3>Rạp phim đỉnh nhất Việt Nam</h3>
-                <p>Anh Hùng Tranh Bá Cinema</p>
+        <div class="carousel-inner" role="listbox">
+            <div class="item active">
+                <img src="/Image/background/gioithieu1.jpg" alt="Image">
+                <div class="carousel-caption">
+                    <h3>Rạp phim đỉnh nhất Việt Nam</h3>
+                    <p>Anh Hùng Tranh Bá Cinema</p>
+                </div>
             </div>
-           
         </div>
     </div>
 
-    <div class="text-center">
+    <div class="container text-center">
         <h3>Anh Hùng Tranh Bá Cinema</h3><br>
         <div class="row">
             <div class="col-sm-4">
@@ -47,4 +53,5 @@
     </div>
     <br>
 </body>
+</html>
 

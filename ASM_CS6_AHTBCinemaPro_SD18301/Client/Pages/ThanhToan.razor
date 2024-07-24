@@ -1,13 +1,4 @@
-﻿@inject HttpClient Http
-@inject IJSRuntime JS
-@inject NavigationManager NavigationManager
-@using ASM_CS6_AHTBCinemaPro_SD18301.Models
-@using ASM_CS6_AHTBCinemaPro_SD18301.Shared.Models
-@using System.Text.Json
-@using Newtonsoft.Json
-@using Newtonsoft.Json.Serialization
-
-@page "/thanhtoan/{SeatId}/{IdPhim}/{IdCaChieu:int}/{IdGioChieu:int}/{TotalPrice:int}"
+﻿@page "/thanhtoan"
 @{
 }
 <style>
@@ -181,9 +172,24 @@
 <body>
     <div class="container">
         <div class="row">
+            <div class="col-lg-4 mb-lg-0 mb-3">
+                <div class="card p-3">
+                    <img src="/Image/qrthanhtoan.jpg" alt="">
+                </div>
+            </div>
+            <div class="col-lg-4 mb-lg-0 mb-3">
+                <div class="card p-3">
+                    <img src="/Image/qrthanhtoan2.jpg" alt="">
+                </div>
+            </div>
+            <div class="col-lg-4 mb-lg-0 mb-3">
+                <div class="card p-3">
+                    <img src="/Image/qrthanhtoan3.jpg" alt="">
+                </div>
+            </div>
             <div class="col-12 mt-4">
                 <div class="card p-3">
-                    <p class="mb-0 fw-bold h4">Thông tin thanh toán</p>
+                    <p class="mb-0 fw-bold h4">Phương thức thanh toán</p>
                 </div>
             </div>
             <div class="col-12">
@@ -195,43 +201,27 @@
                         <div class="collapse show p-3 pt-0" id="collapseExample">
                             <div class="row">
                                 <div class="col-lg-5 mb-lg-0 mb-3">
-                                    @if (isLoading)
-                                    {
-                                        <p>Đang tải...</p>
-                                    }
-                                    else if (!string.IsNullOrEmpty(errorMessage))
-                                    {
-                                        <p class="text-danger">@errorMessage</p>
-                                    }
-                                    else if (multiModel?.Phims != null && multiModel.Phims.Any())
-                                    {
-                                        @foreach (var phim in multiModel.Phims)
-                                        {
-                                            <p class="mb-0">
-                                                <span class="fw-bold">Tên phim:</span>
-                                                <span class="c-green">@phim.TenPhim</span>
-                                            </p>
+                                    <p class="h4 mb-0">Thông tin</p>
+                                    <p class="mb-0">
+                                        <span class="fw-bold">Tên phim:</span>
+                                        <span class="c-green">Chuyện tình Doãn Chí Bình</span>
+                                    </p>
 
                                             @if (multiModel?.NgayChieus != null && multiModel.NgayChieus.Any())
                                             {
                                                 @foreach (var ngayChieu in multiModel.NgayChieus)
                                                 {
-                                                    <p class="mb-0">
-                                                        <span class="fw-bold">Ngày chiếu:</span>
-                                                        <span class="c-green">@ngayChieu.NgayChieuPhim.ToString("dd/MM/yyyy")</span>
-                                                    </p>
+                                    <p class="mb-0">
+                                        <span class="fw-bold">Ngày chiếu:</span>
+                                        <span class="c-green">20/06/2024</span>
+                                    </p>
 
                                                     @if (ngayChieu.GioChieus != null && ngayChieu.GioChieus.Any())
                                                     {
-                                                        <p class="mb-0">
-                                                            <span class="fw-bold">Giờ chiếu:</span>
-                                                            @foreach (var gioChieu in ngayChieu.GioChieus)
-                                                            {
-                                                                <span class="c-green">
-                                                                    @gioChieu.GioBatDau.ToString(@"hh\:mm") - @gioChieu.GioKetThuc.ToString(@"hh\:mm")
-                                                                </span>
-                                                            }
-                                                        </p>
+                                    <p class="mb-0">
+                                        <span class="fw-bold">Giá:</span>
+                                        <span class="c-green">180.000 VNĐ</span>
+                                    </p>
                                                     }
                                                     else
                                                     {
@@ -260,9 +250,8 @@
                                     <form action="" class="form">
                                         <div class="row">
                                             <div class="col-12">
-                                                <div id="paypal-container">
-                                                    <div id="paypal-button-container"></div>
-                                                </div>
+                                                <div class="btn btn-primary w-100" id="payBtn">Tạo mã giao dịch</div>
+                                            </div>
                                             </div>
                                             <div id="message" class="message"></div>
                                         </div>
@@ -277,86 +266,32 @@
         </div>
     </div>
 </body>
+<script>
+    // Biến cờ để theo dõi xem mã giao dịch đã được tạo hay chưa
+    var transactionCreated = false;
 
-@code {
-    [Parameter]
-    public string SeatId { get; set; }
-
-    [Parameter]
-    public string IdPhim { get; set; }
-
-    [Parameter]
-    public int IdCaChieu { get; set; }
-
-    [Parameter]
-    public int IdGioChieu { get; set; }
-
-    [Parameter]
-    public int TotalPrice { get; set; }
-
-    public Phim Movie { get; set; }
-    public Multimodel multiModel { get; private set; }
-    private string phimTen = string.Empty;
-    private bool isLoading = true;
-    private string errorMessage = string.Empty;
-
-    protected override async Task OnInitializedAsync()
-    {
-        isLoading = true; // Bắt đầu quá trình tải dữ liệu
-
-        try
-        {
-            // Kiểm tra ID ghế và phim
-            Console.WriteLine($"ID ghế: {SeatId}, ID phim: {IdPhim}, ID ngày chiếu: {IdCaChieu}");
-
-            // Gọi API để lấy thông tin từ Multimodel
-            var response = await Http.GetAsync($"api/ChiTiet/GetChiTiet/{IdPhim}");
-            if (response.IsSuccessStatusCode)
-            {
-                var jsonResponse = await response.Content.ReadAsStringAsync();
-
-                var settings = new JsonSerializerSettings
-                    {
-                        PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-                        Converters = { new CustomTimeSpanConverter() },
-                        ContractResolver = new CamelCasePropertyNamesContractResolver()
-                    };
-
-                multiModel = JsonConvert.DeserializeObject<Multimodel>(jsonResponse, settings);
-
-                if (multiModel?.Phims != null && multiModel.Phims.Any())
-                {
-                    Movie = multiModel.Phims.FirstOrDefault();
-                    phimTen = Movie?.TenPhim ?? string.Empty;
-                }
-            }
-            else
-            {
-                errorMessage = "Không thể tải dữ liệu từ máy chủ.";
-            }
+    document.getElementById('payBtn').addEventListener('click', function () {
+        // Kiểm tra nếu mã giao dịch đã được tạo
+        if (transactionCreated) {
+            alert('Mã giao dịch đã được tạo. Vui lòng kiểm tra lại.');
+            return;
         }
-        catch (Exception ex)
-        {
-            errorMessage = $"Đã xảy ra lỗi: {ex.Message}";
-        }
-        finally
-        {
-            isLoading = false; // Kết thúc quá trình tải dữ liệu
-        }
-    }
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await JS.InvokeVoidAsync("initializeCheckout", TotalPrice);
-        }
-    }
-    // private void TogglePayPalButtonVisibility()
-    // {
 
-    //     Console.WriteLine("Showing PayPal button");
-    //     JS.InvokeVoidAsync("showPayPalButton");
-    //     Console.WriteLine("Hiding PayPal button");
-    //     JS.InvokeVoidAsync("hidePayPalButton");
-    // }
-}
+        // Hiển thị thông báo đợi duyệt
+        var messageDiv = document.getElementById('message');
+        messageDiv.style.display = 'block';
+        messageDiv.innerHTML = 'Đang tạo mã giao dịch...';
+
+        // Tạo mã giao dịch ngẫu nhiên
+        var transactionId = 'GD' + Math.floor(Math.random() * 1000000);
+        transactionCreated = true; // Đánh dấu mã giao dịch đã được tạo
+
+        // Vô hiệu hóa nút "Thanh toán"
+        document.getElementById('payBtn').disabled = true;
+
+        // Cập nhật thông báo với mã giao dịch sau một thời gian ngắn
+        setTimeout(function () {
+            messageDiv.innerHTML = 'Tạo mã giao dịch thành công. Mã giao dịch của bạn là: ' + transactionId + '.<br>Nếu chuyển sai nội dung thanh toán hãy liên hệ chăm sóc khách hàng để được an ủi';
+        }, 2000); // Thời gian chờ 2 giây (2000 milliseconds)
+    });
+</script>
