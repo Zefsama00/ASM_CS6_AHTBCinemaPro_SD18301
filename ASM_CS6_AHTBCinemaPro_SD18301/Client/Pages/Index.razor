@@ -1,7 +1,67 @@
 ﻿@page "/"
+@inject IJSRuntime JSRuntime
+@using System.Timers
+@using System.Threading.Tasks
 
-<h1>Hello, world!</h1>
+<link href="css/style.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<header class="row">
+    <div id="slide1">
+        <!-- Các slide item -->
+        @for (var i = 1; i <= 6; i++)
+        {
+            <div class="item1" style="background-image: url('/image/anhnen@(i).jpg');" data-index="@i">
+                <div class="content1">
+                    <p class="name1">Ảnh nền @i</p>
+                    <div class="des1">nội dung</div>
+                    <button class="btn btn-primary">Xem ngay!</button>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="buttons1">
+        <button id="prev1" class="btn btn-light">
+            <i class="fa-solid fa-angle-left"></i>
+        </button>
+        <button id="next1" class="btn btn-light">
+            <i class="fa-solid fa-angle-right"></i>
+        </button>
+    </div>
+</header>
 
-Welcome to your new app.
+<main class="container mt-5">
+    <div class="row">
+        @foreach (var category in new[] { "hành động", "phiêu lưu" })
+        {
+            <div class="col-md-12 mb-5">
+                <div class="slider-wrapper border border-dark rounded">
+                    <div class="slider-title text-center bg-light py-2">Thể loại @category</div>
+                    <div class="slider" id="slide-@category">
+                        @for (var i = 1; i <= 6; i++)
+                        {
+                            <div class="item @(i == 1 ? "active" : "") bg-cover" style="background-image: url('/image/anhnen1.jpg');" data-index="@i">
+                                <div class="content text-white p-3">
+                                    <div class="name">Ảnh nền @i</div>
+                                    <div class="des">Tinh ru anh di chay pho, chua kip chay pho thi anhchay mat tieu</div>
+                                    <button class="btn btn-primary">Xem ngay!</button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="buttons position-relative">
+                        <button class="btn btn-light prev position-absolute" style="left: 0px; bottom: 110px;">
+                            <i class="fa-solid fa-angle-left"></i>
+                        </button>
+                        <button class="btn btn-light next position-absolute" style="right: 0px; bottom: 110px;">
+                            <i class="fa-solid fa-angle-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</main>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+<script src="js/js1.js"></script>
+
