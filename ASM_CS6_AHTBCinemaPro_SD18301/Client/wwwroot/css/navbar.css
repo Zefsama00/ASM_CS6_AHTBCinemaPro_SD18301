@@ -1,0 +1,74 @@
+﻿* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    box-sizing: border-box;
+}
+
+body {
+    background: url(Image/brmovie.jpg) no-repeat center /cover;
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+}
+
+header {
+    width: 100%;
+    height: 85px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 10%;
+    background: #3d3d3d;
+}
+
+.logo {
+    margin-top: 10px;
+    font-size: 30px;
+    font-weight: bold;
+    color: #fff;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+}
+nav{
+    margin-top:10px
+}
+nav li {
+    display: inline-block;
+    list-style: none;
+    padding: 0px 30px;
+}
+
+a, button {
+    font-size: 16px;
+    font-weight: 500;
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+}
+button a{
+    text-decoration:none;
+  
+}
+    button a:hover {
+        text-decoration: none;
+        color: white;
+    }
+button {
+    background: rgba(0,0,0,0.2);
+    border: 2px solid #fd5e53;
+    border-radius: 50px;
+    padding: 9px 25px;
+}
+nav li a:hover {
+    text-decoration: none;
+    font-size: 19px;
+    color: #fd5e53;
+    transition: all 0.4s ease 0s;
+}
+
+button:hover {
+    text-decoration: none;
+    background-color: #fd5e53;
+    transition: all 0.4s ease 0s;
+}

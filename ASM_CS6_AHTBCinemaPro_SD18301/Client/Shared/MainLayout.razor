@@ -1,17 +1,32 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+
+    <head>
+        <link rel="stylesheet" href="/css//navbar.css">
+    </head>
+    <body>
+        <header>
+            <div class="logo">
+                <p>AHTB</p>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="">Trang chủ</a></li>
+                    <li><a href="">Giới thiệu</a></li>
+                    <li><a href="">Phim chưa chiếu</a></li>
+                    <li><a href="">Ưu đãi</a></li>
+                    <li><a href="">Câu hỏi thường gặp</a></li>
+                </ul>
+            </nav>
+        <button href="login"><a href="login">Đăng nhập</a></button>
+        </header>
+    </body>
 
     <div class="main">
-        <div class="top-row px-4">
-            <a href="http://blazor.net" target="_blank" class="ml-md-auto">About</a>
-        </div>
+      
 
         <div class="content px-4">
             @Body
         </div>
     </div>
-</div>
+
