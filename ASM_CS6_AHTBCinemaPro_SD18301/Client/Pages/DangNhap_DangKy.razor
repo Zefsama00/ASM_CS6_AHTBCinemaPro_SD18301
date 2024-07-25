@@ -1,0 +1,30 @@
+﻿@page "/login"
+<head>
+    <link href="/css/login.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container" id="container">
+        <input type="checkbox" id="chk" aria-hidden="true">
+
+        <div class="signup">
+            <form>
+                <label for="chk" aria-hidden="true">ĐĂNG KÝ</label>
+                <input type="text" name="txt" placeholder="Họ và Tên" required="">
+                <input type="email" name="email" placeholder="Email" required="">
+                <input type="password" name="password" placeholder="Mật khẩu" required="">
+                <input type="password" name="password1" placeholder="Nhập lại mật khẩu">
+                <input type="date" name="date" placeholder="Ngày sinh" required="">
+                <button>Đăng ký</button>
+            </form>
+        </div>
+
+        <div class="login">
+            <form>
+                <label for="chk" aria-hidden="true">ĐĂNG NHẬP</label>
+                <input type="txt" name="txt" placeholder="Tài Khoản" required="">
+                <input type="password" name="password" placeholder="Mật khẩu" required="">
+                <button>Đăng nhập</button>
+            </form>
+        </div>
+    </div>
+</body>
