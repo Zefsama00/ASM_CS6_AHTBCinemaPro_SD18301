@@ -6,7 +6,7 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Data
 {
     public class DBCinemaContext  : DbContext
     {
-        public DbSet<CaChieu> CaChieus { get; set; }
+        public DbSet<NgayChieu> NgayChieus { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<GioChieu> GioChieus { get; set; }
         public DbSet<Ghe> Ghes { get; set; }
@@ -26,7 +26,7 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<CaChieu>().HasKey(p => p.IdCaChieu);
+            modelBuilder.Entity<NgayChieu>().HasKey(p => p.IdCaChieu);
             modelBuilder.Entity<User>().HasKey(p => p.IdUser);
             modelBuilder.Entity<GioChieu>().HasKey(p => p.IdGioChieu);
             modelBuilder.Entity<Ghe>().HasKey(p => p.IdGhe);
@@ -51,7 +51,7 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Data
               .HasOne(p => p.LoaiPhim)
               .WithMany(c => c.Phims)
               .HasForeignKey(p => p.TheLoai);
-            modelBuilder.Entity<CaChieu>()
+            modelBuilder.Entity<NgayChieu>()
               .HasOne(p => p.Phims)
               .WithMany(c => c.CaChieus)
               .HasForeignKey(p => p.Phim);
@@ -59,7 +59,7 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Data
           .HasOne(p => p.CaChieus)
           .WithMany(c => c.GioChieus)
           .HasForeignKey(p => p.Cachieu);
-            modelBuilder.Entity<CaChieu>()
+            modelBuilder.Entity<NgayChieu>()
               .HasOne(p => p.Phongs)
               .WithMany(c => c.CaChieu)
               .HasForeignKey(p => p.Phong);

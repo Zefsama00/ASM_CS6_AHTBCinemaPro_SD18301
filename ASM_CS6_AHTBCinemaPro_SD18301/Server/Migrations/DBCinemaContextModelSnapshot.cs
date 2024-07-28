@@ -19,34 +19,6 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Migrations
                 .HasAnnotation("ProductVersion", "5.0.17")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("ASM_CS6_AHTBCinemaPro_SD18301.Models.CaChieu", b =>
-                {
-                    b.Property<int>("IdCaChieu")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("NgayChieu")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Phim")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Phong")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("TrangThai")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("IdCaChieu");
-
-                    b.HasIndex("Phim");
-
-                    b.HasIndex("Phong");
-
-                    b.ToTable("CaChieus");
-                });
-
             modelBuilder.Entity("ASM_CS6_AHTBCinemaPro_SD18301.Models.Ghe", b =>
                 {
                     b.Property<string>("IdGhe")
@@ -220,6 +192,34 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Migrations
                     b.ToTable("LoaiPhims");
                 });
 
+            modelBuilder.Entity("ASM_CS6_AHTBCinemaPro_SD18301.Models.NgayChieu", b =>
+                {
+                    b.Property<int>("IdCaChieu")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("NgayChieuPhim")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Phim")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Phong")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("TrangThai")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("IdCaChieu");
+
+                    b.HasIndex("Phim");
+
+                    b.HasIndex("Phong");
+
+                    b.ToTable("NgayChieus");
+                });
+
             modelBuilder.Entity("ASM_CS6_AHTBCinemaPro_SD18301.Models.NhanVien", b =>
                 {
                     b.Property<string>("IdNV")
@@ -369,21 +369,6 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Migrations
                     b.ToTable("Ves");
                 });
 
-            modelBuilder.Entity("ASM_CS6_AHTBCinemaPro_SD18301.Models.CaChieu", b =>
-                {
-                    b.HasOne("ASM_CS6_AHTBCinemaPro_SD18301.Models.Phim", "Phims")
-                        .WithMany("CaChieus")
-                        .HasForeignKey("Phim");
-
-                    b.HasOne("ASM_CS6_AHTBCinemaPro_SD18301.Models.Phong", "Phongs")
-                        .WithMany("CaChieu")
-                        .HasForeignKey("Phong");
-
-                    b.Navigation("Phims");
-
-                    b.Navigation("Phongs");
-                });
-
             modelBuilder.Entity("ASM_CS6_AHTBCinemaPro_SD18301.Models.Ghe", b =>
                 {
                     b.HasOne("ASM_CS6_AHTBCinemaPro_SD18301.Models.LoaiGhe", "LoaiGhes")
@@ -401,7 +386,7 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Migrations
 
             modelBuilder.Entity("ASM_CS6_AHTBCinemaPro_SD18301.Models.GioChieu", b =>
                 {
-                    b.HasOne("ASM_CS6_AHTBCinemaPro_SD18301.Models.CaChieu", "CaChieus")
+                    b.HasOne("ASM_CS6_AHTBCinemaPro_SD18301.Models.NgayChieu", "CaChieus")
                         .WithMany("GioChieus")
                         .HasForeignKey("Cachieu")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -448,6 +433,21 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Migrations
                     b.Navigation("Users");
                 });
 
+            modelBuilder.Entity("ASM_CS6_AHTBCinemaPro_SD18301.Models.NgayChieu", b =>
+                {
+                    b.HasOne("ASM_CS6_AHTBCinemaPro_SD18301.Models.Phim", "Phims")
+                        .WithMany("CaChieus")
+                        .HasForeignKey("Phim");
+
+                    b.HasOne("ASM_CS6_AHTBCinemaPro_SD18301.Models.Phong", "Phongs")
+                        .WithMany("CaChieu")
+                        .HasForeignKey("Phong");
+
+                    b.Navigation("Phims");
+
+                    b.Navigation("Phongs");
+                });
+
             modelBuilder.Entity("ASM_CS6_AHTBCinemaPro_SD18301.Models.NhanVien", b =>
                 {
                     b.HasOne("ASM_CS6_AHTBCinemaPro_SD18301.Models.User", "Users")
@@ -483,11 +483,6 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Migrations
                     b.Navigation("GioChieus");
                 });
 
-            modelBuilder.Entity("ASM_CS6_AHTBCinemaPro_SD18301.Models.CaChieu", b =>
-                {
-                    b.Navigation("GioChieus");
-                });
-
             modelBuilder.Entity("ASM_CS6_AHTBCinemaPro_SD18301.Models.Ghe", b =>
                 {
                     b.Navigation("Ves");
@@ -516,6 +511,11 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Migrations
             modelBuilder.Entity("ASM_CS6_AHTBCinemaPro_SD18301.Models.LoaiPhim", b =>
                 {
                     b.Navigation("Phims");
+                });
+
+            modelBuilder.Entity("ASM_CS6_AHTBCinemaPro_SD18301.Models.NgayChieu", b =>
+                {
+                    b.Navigation("GioChieus");
                 });
 
             modelBuilder.Entity("ASM_CS6_AHTBCinemaPro_SD18301.Models.NhanVien", b =>

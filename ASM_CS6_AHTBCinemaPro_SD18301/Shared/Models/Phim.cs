@@ -25,6 +25,6 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Models
         [Range(1, int.MaxValue, ErrorMessage = "Thời lượng phải là số nguyên dương (phút)")]
         public int ThoiLuong { get; set; }
         public string HinhAnh { get; set; }
-        public ICollection<CaChieu> CaChieus { get; set; }
+        public ICollection<NgayChieu> CaChieus { get; set; }
     }
 }

@@ -20,7 +20,7 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Models
 
         [ForeignKey("CaChieus")]
         public int Cachieu { get; set; }
-        public CaChieu CaChieus { get; set; }
+        public NgayChieu CaChieus { get; set; }
 
         public string TrangThai { get; set; }
 

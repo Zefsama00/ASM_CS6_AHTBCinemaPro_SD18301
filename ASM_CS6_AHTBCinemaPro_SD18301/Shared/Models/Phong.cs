@@ -12,6 +12,6 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Models
         public string TrangThai { get; set; }
         public int SoLuongGhe { get; set; }
         public ICollection<Ghe> Ghes { get; set; }
-        public ICollection<CaChieu> CaChieu { get; set;}
+        public ICollection<NgayChieu> CaChieu { get; set;}
     }
 }

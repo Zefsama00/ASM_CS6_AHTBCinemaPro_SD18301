@@ -6,6 +6,78 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\Image\app-store.png" />
+    <Content Remove="wwwroot\Image\black-banner.png" />
+    <Content Remove="wwwroot\Image\cartoons\coco.jpg" />
+    <Content Remove="wwwroot\Image\cartoons\croods.jpg" />
+    <Content Remove="wwwroot\Image\cartoons\demon-slayer.jpg" />
+    <Content Remove="wwwroot\Image\cartoons\dragon.jpg" />
+    <Content Remove="wwwroot\Image\cartoons\over-the-moon.jpg" />
+    <Content Remove="wwwroot\Image\cartoons\weathering.jpg" />
+    <Content Remove="wwwroot\Image\cartoons\your-name.jpg" />
+    <Content Remove="wwwroot\Image\google-play.png" />
+    <Content Remove="wwwroot\Image\movies\bat-man.jpg" />
+    <Content Remove="wwwroot\Image\movies\blood-shot.jpg" />
+    <Content Remove="wwwroot\Image\movies\call.jpg" />
+    <Content Remove="wwwroot\Image\movies\captain-marvel.png" />
+    <Content Remove="wwwroot\Image\movies\end-game.jpg" />
+    <Content Remove="wwwroot\Image\movies\hunter-killer.jpg" />
+    <Content Remove="wwwroot\Image\movies\insidious.jpg" />
+    <Content Remove="wwwroot\Image\movies\love-roise.jpg" />
+    <Content Remove="wwwroot\Image\movies\resident-evil.jpg" />
+    <Content Remove="wwwroot\Image\movies\theatre-dead.jpg" />
+    <Content Remove="wwwroot\Image\movies\transformer.jpg" />
+    <Content Remove="wwwroot\Image\series\mandalorian.jpg" />
+    <Content Remove="wwwroot\Image\series\penthouses.jpg" />
+    <Content Remove="wwwroot\Image\series\star-trek.jpg" />
+    <Content Remove="wwwroot\Image\series\start-trek.jpeg" />
+    <Content Remove="wwwroot\Image\series\stranger-thing.jpg" />
+    <Content Remove="wwwroot\Image\series\supergirl.jpg" />
+    <Content Remove="wwwroot\Image\series\the-falcon.webp" />
+    <Content Remove="wwwroot\Image\series\wanda.png" />
+    <Content Remove="wwwroot\Image\series\wanda.webp" />
+    <Content Remove="wwwroot\Image\supergirl-banner.jpg" />
+    <Content Remove="wwwroot\Image\transformer-banner.jpg" />
+    <Content Remove="wwwroot\Image\wanda-banner.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\Image\app-store.png" />
+    <None Include="wwwroot\Image\black-banner.png" />
+    <None Include="wwwroot\Image\cartoons\coco.jpg" />
+    <None Include="wwwroot\Image\cartoons\croods.jpg" />
+    <None Include="wwwroot\Image\cartoons\demon-slayer.jpg" />
+    <None Include="wwwroot\Image\cartoons\dragon.jpg" />
+    <None Include="wwwroot\Image\cartoons\over-the-moon.jpg" />
+    <None Include="wwwroot\Image\cartoons\weathering.jpg" />
+    <None Include="wwwroot\Image\cartoons\your-name.jpg" />
+    <None Include="wwwroot\Image\google-play.png" />
+    <None Include="wwwroot\Image\movies\bat-man.jpg" />
+    <None Include="wwwroot\Image\movies\blood-shot.jpg" />
+    <None Include="wwwroot\Image\movies\call.jpg" />
+    <None Include="wwwroot\Image\movies\captain-marvel.png" />
+    <None Include="wwwroot\Image\movies\end-game.jpg" />
+    <None Include="wwwroot\Image\movies\hunter-killer.jpg" />
+    <None Include="wwwroot\Image\movies\insidious.jpg" />
+    <None Include="wwwroot\Image\movies\love-roise.jpg" />
+    <None Include="wwwroot\Image\movies\resident-evil.jpg" />
+    <None Include="wwwroot\Image\movies\theatre-dead.jpg" />
+    <None Include="wwwroot\Image\movies\transformer.jpg" />
+    <None Include="wwwroot\Image\series\mandalorian.jpg" />
+    <None Include="wwwroot\Image\series\penthouses.jpg" />
+    <None Include="wwwroot\Image\series\star-trek.jpg" />
+    <None Include="wwwroot\Image\series\start-trek.jpeg" />
+    <None Include="wwwroot\Image\series\stranger-thing.jpg" />
+    <None Include="wwwroot\Image\series\supergirl.jpg" />
+    <None Include="wwwroot\Image\series\the-falcon.webp" />
+    <None Include="wwwroot\Image\series\wanda.png" />
+    <None Include="wwwroot\Image\series\wanda.webp" />
+    <None Include="wwwroot\Image\supergirl-banner.jpg" />
+    <None Include="wwwroot\Image\transformer-banner.jpg" />
+    <None Include="wwwroot\Image\wanda-banner.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.17" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.17" PrivateAssets="all" />
     <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />

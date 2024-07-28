@@ -94,7 +94,7 @@
             font-size: 20px;
         }
 
-header {
+.dodulieu {
     height: 400px;
     position: relative;
     z-index: 1;
@@ -215,33 +215,7 @@ header {
             background-color: #bac383;
         }
 
-.navbar-nav {
-    flex-direction: row;
-}
 
-.nav-link {
-    padding-right: .5rem !important;
-    padding-left: .5rem !important;
-    position: relative;
-}
-
-    .nav-link::after {
-        content: '';
-        display: block;
-        width: 0;
-        height: 2px;
-        background: #007bff;
-        /* Màu sắc của dấu gạch dưới */
-        transition: width 0.3s;
-        position: absolute;
-        bottom: 4px;
-        left: 0;
-    }
-
-    .nav-link:hover::after,
-    .nav-link.active::after {
-        width: 100%;
-    }
 
 .input-wrapper {
     width: 100%;
@@ -315,24 +289,7 @@ header {
         margin-right: 10px;
     }
 
-.navbar {
-    font-family: 'Roboto', sans-serif;
-    /* Thay đổi phông chữ */
-    background-color: #343a40;
-    /* Màu nền tối hơn */
-}
 
-.navbar-brand {
-    color: #ffffff;
-}
-
-.navbar-nav .nav-link {
-    color: #ffffff;
-}
-
-    .navbar-nav .nav-link.active {
-        color: #f8f9fa;
-    }
 
 .input-wrapper input {
     border-radius: 20px;
