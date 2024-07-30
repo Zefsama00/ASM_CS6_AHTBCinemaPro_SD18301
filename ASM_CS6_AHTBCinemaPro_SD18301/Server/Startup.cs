@@ -1,4 +1,7 @@
 using ASM_CS6_AHTBCinemaPro_SD18301.Data;
+using ASM_CS6_AHTBCinemaPro_SD18301.Models;
+using ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers;
+using ASM_CS6_AHTBCinemaPro_SD18301.Server.Server;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -25,14 +28,26 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<DBCinemaContext>(options =>
-           options.UseSqlServer(Configuration.GetConnectionString("DBConnection")));
+         options.UseSqlServer(Configuration.GetConnectionString("DBConnection")));
             services.AddControllers().AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
                 options.JsonSerializerOptions.MaxDepth = 64; // Increase depth if necessary
             });
             services.AddControllersWithViews();
+            services.AddScoped<GheServer>();
             services.AddRazorPages();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()
+                               .AllowAnyMethod()
+                               .AllowAnyHeader();
+                    });
+            });
+            services.AddHttpClient(); // 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,12 +61,15 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server
             else
             {
                 app.UseExceptionHandler("/Error");
+                app.UseHsts();
             }
 
             app.UseBlazorFrameworkFiles();
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseCors("AllowAll");
 
             app.UseEndpoints(endpoints =>
             {

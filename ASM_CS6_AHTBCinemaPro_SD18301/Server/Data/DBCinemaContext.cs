@@ -1,6 +1,9 @@
 ﻿
 using ASM_CS6_AHTBCinemaPro_SD18301.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 
 namespace ASM_CS6_AHTBCinemaPro_SD18301.Data
 {
@@ -95,6 +98,11 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Data
            .WithMany(c => c.NhanViens)
            .HasForeignKey(p => p.IDUser);
 
+        }
+
+        internal ActionResult<List<Ghe>> GetGhes()
+        {
+            throw new NotImplementedException();
         }
     }
 }
