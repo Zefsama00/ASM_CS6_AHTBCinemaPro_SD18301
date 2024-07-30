@@ -1,0 +1,91 @@
+﻿@page "/"
+
+@using System.IO
+@using Tewr.Blazor.FileReader
+@inject IFileReaderService fileReader
+@inject HttpClient client
+
+<h1>UpLoadAnh</h1>
+<div class="row">
+    <div class="col-4">
+        <div class="form-group">
+            <input type="file" @ref="inputReference" @onchange="async () => await OpenFileAsync()" />
+            <ul>
+                <li>File Name: @fileName</li>
+                <li>Size: @size</li>
+                <li>Type: @type</li>
+            </ul>
+        </div>
+        <button class="btn btn-block btn-success" @onclick="async () => await UploadFileAsync()">Upload File</button>
+
+        @if (!string.IsNullOrWhiteSpace(message))
+        {
+            <div class="alert alert-success">
+                @message
+            </div>
+        }
+    </div>
+    <div class="col-4">
+        @if (imagePath != null)
+        {
+            <img style="width:150px" src="@imagePath" alt="Selected Image" />
+        }
+    </div>
+</div>
+
+@code {
+    ElementReference inputReference;
+    string message = string.Empty;
+    string imagePath = null;
+
+    string fileName = string.Empty;
+    string type = string.Empty;
+    string size = string.Empty;
+
+    Stream fileStream = null;
+
+    async Task OpenFileAsync()
+    {
+        var file = (await fileReader.CreateReference(inputReference).EnumerateFilesAsync()).FirstOrDefault();
+
+        if (file == null)
+            return;
+
+        var fileInfo = await file.ReadFileInfoAsync();
+        fileName = fileInfo.Name;
+        size = $"{fileInfo.Size} bytes";
+        type = fileInfo.Type;
+
+        using (var ms = await file.CreateMemoryStreamAsync((int)fileInfo.Size))
+        {
+            fileStream = ms;
+            var buffer = new byte[fileInfo.Size];
+            ms.Position = 0;
+            await ms.ReadAsync(buffer, 0, (int)fileInfo.Size);
+            imagePath = $"data:{fileInfo.Type};base64,{Convert.ToBase64String(buffer)}";
+        }
+    }
+
+    async Task UploadFileAsync()
+    {
+        if (fileStream == null)
+        {
+            message = "No file selected.";
+            return;
+        }
+
+        var content = new MultipartFormDataContent();
+        fileStream.Position = 0;
+        content.Add(new StreamContent(fileStream), "file", fileName);
+
+        var response = await client.PostAsync("your-upload-url-here", content);
+        if (response.IsSuccessStatusCode)
+        {
+            message = "File has been uploaded";
+        }
+        else
+        {
+            message = "File upload failed";
+        }
+    }
+}

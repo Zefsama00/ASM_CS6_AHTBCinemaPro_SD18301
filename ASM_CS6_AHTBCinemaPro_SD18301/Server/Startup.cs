@@ -21,7 +21,13 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddCors(options =>
+            {
+                options.AddPolicy("Policy", builer =>
+                builer.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
+            });
             services.AddControllersWithViews();
             services.AddRazorPages();
         }
@@ -43,7 +49,9 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseStaticFiles();
+            app.UseAuthorization();
+            app.UseCors("CorsPolicy");
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
