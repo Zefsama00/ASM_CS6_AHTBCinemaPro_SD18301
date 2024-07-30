@@ -42,6 +42,7 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server
                                .AllowAnyHeader();
                     });
             });
+            services.AddHttpClient(); // 
             services.AddRazorPages();
         }
 
