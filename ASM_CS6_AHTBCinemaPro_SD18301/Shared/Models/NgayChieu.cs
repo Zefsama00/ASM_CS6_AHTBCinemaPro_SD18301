@@ -31,7 +31,7 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Models
         public static ValidationResult ValidateUniqueCaChieu(DateTime ngayChieu, ValidationContext context)
         {
             var caChieu = context.ObjectInstance as NgayChieu;
-            var dbContext = context.GetService(typeof(DBCinemaContext)) as DBCinemaContext;
+            var dbContext = context.GetService(typeof(DBCinemaContextshare)) as DBCinemaContextshare;
 
             var existingCaChieu = dbContext.CaChieus
                 .FirstOrDefault(c => c.Phim == caChieu.Phim && c.Phong == caChieu.Phong && c.NgayChieuPhim.Date == ngayChieu.Date && c.IdCaChieu != caChieu.IdCaChieu);

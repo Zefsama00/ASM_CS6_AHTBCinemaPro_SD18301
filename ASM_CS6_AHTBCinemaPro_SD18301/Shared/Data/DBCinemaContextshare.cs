@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ASM_CS6_AHTBCinemaPro_SD18301.Data
 {
-    public class DBCinemaContext  : DbContext
+    public class DBCinemaContextshare  : DbContext
     {
         public DbSet<NgayChieu> CaChieus { get; set; }
         public DbSet<User> Users { get; set; }
@@ -19,7 +19,7 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Data
         public DbSet<Phim> Phims { get; set; }
         public DbSet<Phong> Phongs { get; set; }
         public DbSet<Ve> Ves { get; set; }
-        public DBCinemaContext(DbContextOptions<DBCinemaContext> options) : base(options)
+        public DBCinemaContextshare(DbContextOptions<DBCinemaContextshare> options) : base(options)
         { 
 
         }

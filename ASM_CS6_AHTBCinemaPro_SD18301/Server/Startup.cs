@@ -32,6 +32,16 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server
                 options.JsonSerializerOptions.MaxDepth = 64; // Increase depth if necessary
             });
             services.AddControllersWithViews();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()
+                               .AllowAnyMethod()
+                               .AllowAnyHeader();
+                    });
+            });
             services.AddRazorPages();
         }
 
@@ -52,7 +62,7 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseCors("AllowAll");
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
