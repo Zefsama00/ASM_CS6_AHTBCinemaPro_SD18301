@@ -1,389 +1,66 @@
-﻿@page "/phimchuachieu"
-@{
-}
-<link rel="stylesheet" href="/css/site.css" />
-<style>
-    img {
-        width: 500px;
-        height: 300px;
-    }
+﻿@page "/phim"
+@inject HttpClient Http
+@using ASM_CS6_AHTBCinemaPro_SD18301.Models
+@using Newtonsoft.Json
 
-    .card {
-        position: relative;
-    }
-
-    .card:hover {
-            transform: scale(1.1); /* Danh sách hiệu ứng hover tùy thuộc vào yêu cầu cụ thể*/
-    }
-           
-
-</style>
 <section>
     <div class="scroll-holder">
         <div class="scroll-tray">
-            <div>
-                <img src="/Image/phim/casino.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/fallenangel.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/inception.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/parasite.jpg" alt="Alternate Text" />
-            </div>
-            <div>
-                <img src="/Image/phim/thewolfofwallstreet.jpg" alt="Alternate Text" />
-            </div>
-            <div>
-                <img src="/Image/phim/casino.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/fallenangel.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/inception.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/parasite.jpg" alt="Alternate Text" />
-            </div>
-            <div>
-                <img src="/Image/phim/thewolfofwallstreet.jpg" alt="Alternate Text" />
-            </div>
-            <div>
-                <img src="/Image/phim/casino.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/fallenangel.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/inception.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/parasite.jpg" alt="Alternate Text" />
-            </div>
-            <div>
-                <img src="/Image/phim/thewolfofwallstreet.jpg" alt="Alternate Text" />
-            </div>
-            <div>
-                <img src="/Image/phim/casino.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/fallenangel.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/inception.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/parasite.jpg" alt="Alternate Text" />
-            </div>
-            <div>
-                <img src="/Image/phim/thewolfofwallstreet.jpg" alt="Alternate Text" />
-            </div>
-            <div>
-                <img src="/Image/phim/casino.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/fallenangel.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/inception.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/parasite.jpg" alt="Alternate Text" />
-            </div>
-            <div>
-                <img src="/Image/phim/thewolfofwallstreet.jpg" alt="Alternate Text" />
-            </div>
-            <div>
-                <img src="/Image/phim/casino.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/fallenangel.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/inception.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/parasite.jpg" alt="Alternate Text" />
-            </div>
-            <div>
-                <img src="/Image/phim/thewolfofwallstreet.jpg" alt="Alternate Text" />
-            </div>
-        </div>
-        <div class="scroll-tray">
-            <div>
-                <img src="/Image/phim/joker.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/thedarkknight.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/nowyouseeme.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/godfather.jpg" alt="Alternate Text" />
-            </div>
-            <div>
-                <img src="/Image/phim/haiphuong.jpg" alt="Alternate Text" />
-            </div>
-            <div>
-                <img src="/Image/phim/joker.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/thedarkknight.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/nowyouseeme.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/godfather.jpg" alt="Alternate Text" />
-            </div>
-            <div>
-                <img src="/Image/phim/haiphuong.jpg" alt="Alternate Text" />
-            </div>
-            <div>
-                <img src="/Image/phim/joker.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/thedarkknight.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/nowyouseeme.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/godfather.jpg" alt="Alternate Text" />
-            </div>
-            <div>
-                <img src="/Image/phim/haiphuong.jpg" alt="Alternate Text" />
-            </div>
-            <div>
-                <img src="/Image/phim/joker.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/thedarkknight.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/nowyouseeme.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/godfather.jpg" alt="Alternate Text" />
-            </div>
-            <div>
-                <img src="/Image/phim/haiphuong.jpg" alt="Alternate Text" />
-            </div>
-            <div>
-                <img src="/Image/phim/joker.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/thedarkknight.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/nowyouseeme.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/godfather.jpg" alt="Alternate Text" />
-            </div>
-            <div>
-                <img src="/Image/phim/haiphuong.jpg" alt="Alternate Text" />
-            </div>
-            <div>
-                <img src="/Image/phim/joker.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/thedarkknight.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/nowyouseeme.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/godfather.jpg" alt="Alternate Text" />
-            </div>
-            <div>
-                <img src="/Image/phim/haiphuong.jpg" alt="Alternate Text" />
-            </div>
-            <div>
-                <img src="/Image/phim/joker.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/thedarkknight.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/nowyouseeme.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/godfather.jpg" alt="Alternate Text" />
-            </div>
-            <div>
-                <img src="/Image/phim/haiphuong.jpg" alt="Alternate Text" />
-            </div>
-            <div>
-                <img src="/Image/phim/joker.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/thedarkknight.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/nowyouseeme.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/godfather.jpg" alt="Alternate Text" />
-            </div>
-            <div>
-                <img src="/Image/phim/haiphuong.jpg" alt="Alternate Text" />
-            </div>
-            <div>
-                <img src="/Image/phim/joker.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/thedarkknight.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/nowyouseeme.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/godfather.jpg" alt="Alternate Text" />
-            </div>
-            <div>
-                <img src="/Image/phim/haiphuong.jpg" alt="Alternate Text" />
-            </div>
-            <div>
-                <img src="/Image/phim/joker.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/thedarkknight.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/nowyouseeme.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/godfather.jpg" alt="Alternate Text" />
-            </div>
-            <div>
-                <img src="/Image/phim/haiphuong.jpg" alt="Alternate Text" />
-            </div>
-            <div>
-                <img src="/Image/phim/joker.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/thedarkknight.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/nowyouseeme.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/godfather.jpg" alt="Alternate Text" />
-            </div>
-            <div>
-                <img src="/Image/phim/haiphuong.jpg" alt="Alternate Text" />
-            </div>
-            <div>
-                <img src="/Image/phim/joker.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/thedarkknight.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/nowyouseeme.jpg" alt="">
-            </div>
-            <div>
-                <img src="/Image/phim/godfather.jpg" alt="Alternate Text" />
-            </div>
-            <div>
-                <img src="/Image/phim/haiphuong.jpg" alt="Alternate Text" />
-            </div>
+            @* Dynamically generated images *@
+            @if (PhimChuaChieuList != null)
+            {
+                @foreach (var phim in PhimChuaChieuList)
+                {
+                    <div>
+                        <img src="/Image/phim/@phim.HinhAnh" alt="@phim.TenPhim" style="width: 200px; height: 300px; object-fit: cover;" />
+                    </div>
+                }
+            }
         </div>
     </div>
 </section>
-<div class="container text-center row">
 
-    <h1 class="d-flex justify-content-center" style="color:whitesmoke">PHIM CHƯA CHIẾU</h1>
+<div class="container text-center">
+    <h1 class="d-flex justify-content-center">PHIM CHƯA CHIẾU</h1>
     <br />
-    <div class="row row-cols-1 row-cols-md-2">
-        <div class="col-3 mb-4">
-            <div class="card">
-                <a asp-controller="Home" asp-action="Gioithieuphimchitiet"><img class="card-img-top" src="/Image/phim/joker.jpg" alt="Card image cap"></a>
-                <div class="card-body">
-                    <h5 class="card-title">Joker 2019</h5>
-                    <p class="card-text">Joaquin Phoenix, Robert De Niro,...</p>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4">
+        @if (PhimChuaChieuList != null)
+        {
+            @foreach (var phim in PhimChuaChieuList)
+            {
+                <div class="col mb-4">
+                    <div class="card h-100">
+                        <a href="@($"/phimchitiet/{phim.IdPhim}")">
+                            <img class="card-img-top" src="/Image/phim/@phim.HinhAnh" alt="@phim.TenPhim" style="height: 300px; object-fit: cover;" />
+                        </a>
+                        <div class="card-body">
+                            <h5 class="card-title">@phim.TenPhim</h5>
+                            <p class="card-text">@phim.DienVien</p>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class="col-3 mb-4">
-            <div class="card">
-                <img class="card-img-top" src="/Image/phim/fallenangel.jpg" alt="Card image cap">
-                <div class="card-body">
-                    <h5 class="card-title">Fallen Angel 1995</h5>
-                    <p class="card-text">Lê Minh, Lý Gia Hân, Kim Thành Vũ...</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-3 mb-4">
-            <div class="card">
-                <img class="card-img-top" src="/Image/phim/inception.jpg" alt="Card image cap">
-                <div class="card-body">
-                    <h5 class="card-title">Inception</h5>
-                    <p class="card-text">Leonardo Dicaprio, Tom Hardy,...</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-3 mb-4">
-            <div class="card">
-                <img class="card-img-top" src="/Image/phim/bladerunner2049.jpg" alt="Card image cap">
-                <div class="card-body">
-                    <h5 class="card-title">Blade Runner 2049</h5>
-                    <p class="card-text">Ryan Gosling, Ana de Armas,...</p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row row-cols-1 row-cols-md-2">
-        <div class="col-3 mb-4">
-            <div class="card">
-                <a asp-controller="Home" asp-action="Gioithieuphimchitiet"><img class="card-img-top" src="/Image/phim/godfather.jpg" alt="Card image cap"></a>
-                <div class="card-body">
-                    <h5 class="card-title">Godfather</h5>
-                    <p class="card-text">Marlon Brando, Robert De Niro,...</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-3 mb-4">
-            <div class="card">
-                <img class="card-img-top" src="/Image/phim/casino.jpg" alt="Card image cap">
-                <div class="card-body">
-                    <h5 class="card-title">Casino</h5>
-                    <p class="card-text">Robert De Niro, Joe Pesci, Sharon Stone...</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-3 mb-4">
-            <div class="card">
-                <img class="card-img-top" src="/Image/phim/parasite.jpg" alt="Card image cap">
-                <div class="card-body">
-                    <h5 class="card-title">Parasite</h5>
-                    <p class="card-text">Choi Woo-sik, Park So-dam, Lee Sun Gyun...</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-3 mb-4">
-            <div class="card">
-                <img class="card-img-top" src="/Image/phim/nowyouseeme.jpg" alt="Card image cap">
-                <div class="card-body">
-                    <h5 class="card-title">Now you see me</h5>
-                    <p class="card-text">Jesse Eisenberg, Woody Harrelson...</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<h1 class="d-flex justify-content-center" style="color:whitesmoke">TRAILER</h1>
-<div class="row">
-    <div class="col-md-6">
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/dZOaI_Fn5o4?si=gr9FbsxLGCEwa1Q1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-    </div>
-    <div class="col-md-6">
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/1cK1pcQyzg0?si=kNFg8gUOUtR4opHt" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            }
+        }
     </div>
 </div>
 
+<h1 class="d-flex justify-content-center">TRAILER</h1>
+<div class="row trailer-section">
+    <div class="col-md-6 mb-4">
+        <iframe width="100%" height="315" src="https://www.youtube.com/embed/dZOaI_Fn5o4?si=gr9FbsxLGCEwa1Q1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    </div>
+    <div class="col-md-6 mb-4">
+        <iframe width="100%" height="315" src="https://www.youtube.com/embed/1cK1pcQyzg0?si=kNFg8gUOUtR4opHt" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    </div>
+</div>
+
+
+@code {
+    private List<Phim> PhimChuaChieuList;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await Http.GetStringAsync("api/Phim/chuachieu");
+        PhimChuaChieuList = JsonConvert.DeserializeObject<List<Phim>>(response);
+    }
+}

@@ -1,6 +1,6 @@
 ﻿.container {
     width: 700px;
-    height: 700px;
+    height: 1500px;
     overflow: hidden;
     background: url(image/anhnen.jpg) no-repeat center / cover;
     border-radius: 10px;
@@ -66,6 +66,6 @@ label {
     transform: scale(1);
 }
 #chk:checked ~ .signup label {
-    transform: scale(.6);
+    transform: scale(.5);
 }
 

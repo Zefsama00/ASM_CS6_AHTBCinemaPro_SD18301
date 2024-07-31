@@ -19,7 +19,7 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Data
         public DbSet<LoaiGhe> LoaiGhes { get; set; }
         public DbSet<LoaiPhim> LoaiPhims { get; set; }
         public DbSet<NhanVien> NhanViens { get; set; }
-        public DbSet<Phim> Phims { get; set; }
+        public DbSet<Models.Phim> Phims { get; set; }
         public DbSet<Phong> Phongs { get; set; }
         public DbSet<Ve> Ves { get; set; }
         public DBCinemaContext(DbContextOptions<DBCinemaContext> options) : base(options)
@@ -38,7 +38,7 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Data
             modelBuilder.Entity<LoaiGhe>().HasKey(c => c.IdLoaiGhe);
             modelBuilder.Entity<LoaiPhim>().HasKey(p => p.IdLP);
             modelBuilder.Entity<NhanVien>().HasKey(c => c.IdNV);
-            modelBuilder.Entity<Phim>().HasKey(p => p.IdPhim);
+            modelBuilder.Entity<Models.Phim>().HasKey(p => p.IdPhim);
             modelBuilder.Entity<Phong>().HasKey(c => c.IdPhong);
             modelBuilder.Entity<Ve>().HasKey(p => p.IdVe);
             modelBuilder.Entity<KhuyenMai>().HasKey(p => p.IdKM);
@@ -50,7 +50,7 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Data
              .HasOne(p => p.LoaiGhes)
              .WithMany(c => c.Ghes)
              .HasForeignKey(p => p.LoaiGhe);
-            modelBuilder.Entity<Phim>()
+            modelBuilder.Entity<Models.Phim>()
               .HasOne(p => p.LoaiPhim)
               .WithMany(c => c.Phims)
               .HasForeignKey(p => p.TheLoai);
