@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Migrations
 {
     [DbContext(typeof(DBCinemaContext))]
-    [Migration("20240725105023_dbmoinhat")]
-    partial class dbmoinhat
+    [Migration("20240730162230_data")]
+    partial class data
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

@@ -1,0 +1,64 @@
+﻿@page "/movies-and-promotions"
+@using ASM_CS6_AHTBCinemaPro_SD18301.Models
+@using Newtonsoft.Json
+@inject HttpClient Http
+<body>
+  
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="thumbnail">
+                    <img src="/Image/background/uudai1.jpg" class="img-responsive" alt="Image">
+                    <div class="caption">
+                        <p>kkkkkkk</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="thumbnail">
+                    <img src="/Image/background/uudai2.jpg" class="img-responsive" alt="Image">
+                    <div class="caption">
+                        <p>kkkkkkkk</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .thumbnail {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            padding: 10px; /* Add padding to create spacing inside the thumbnail */
+            max-width: 300px; /* Set a maximum width for the thumbnail */
+            margin-top: 20px; /* Center the thumbnail */
+        }
+
+            .thumbnail:hover {
+                transform: scale(1.05);
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            }
+
+            .thumbnail img {
+                object-fit: contain;
+                height: 400px; /* Ensure aspect ratio is maintained */
+                width: 880%; /* Ensure the image scales down to fit the thumbnail */
+                max-height: 600px; /* Set a maximum height for the images */
+            }
+
+        .caption {
+            text-align: center;
+            color: white;
+            background-color: #fd5e53;
+            begin top: 10px ;
+            width: 100%;
+            margin-top: 10px; /* Make caption span the full width of the thumbnail */
+        }
+    </style>
+
+</body>
