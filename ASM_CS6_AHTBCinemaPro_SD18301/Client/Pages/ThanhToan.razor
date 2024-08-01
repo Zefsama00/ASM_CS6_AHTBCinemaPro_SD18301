@@ -234,7 +234,7 @@
         </div>
     </div>
 </body>
-<script>
+@* <script>
     // Biến cờ để theo dõi xem mã giao dịch đã được tạo hay chưa
     var transactionCreated = false;
 
@@ -262,4 +262,12 @@
             messageDiv.innerHTML = 'Tạo mã giao dịch thành công. Mã giao dịch của bạn là: ' + transactionId + '.<br>Nếu chuyển sai nội dung thanh toán hãy liên hệ chăm sóc khách hàng để được an ủi';
         }, 2000); // Thời gian chờ 2 giây (2000 milliseconds)
     });
-</script>
+</script> *@
+@code {
+   
+
+    protected override void OnInitialized()
+    {
+       
+    }
+}

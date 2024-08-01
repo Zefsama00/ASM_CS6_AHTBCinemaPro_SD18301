@@ -1,0 +1,224 @@
+﻿@inject HttpClient Http
+@inject IJSRuntime JS
+@inject NavigationManager NavigationManager
+@using ASM_CS6_AHTBCinemaPro_SD18301.Models
+@using ASM_CS6_AHTBCinemaPro_SD18301.Shared.Models
+@using System.Text.Json
+@using Newtonsoft.Json
+@using Newtonsoft.Json.Serialization
+@using static ASM_CS6_AHTBCinemaPro_SD18301.Models.GioChieu
+
+@page "/chitiet/{Id}"
+
+
+<head>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.awesome.com/fontawesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.awesome.com/fontawesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="css/site.css" />
+    <style>
+        .black-bg {
+            background-color: #000;
+            color: #fff;
+            padding: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .trailer-button {
+            order: 2;
+            border-radius: 50px;
+            border: none;
+            padding: 10px 20px;
+        }
+
+        .movie-details {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        .floating-btn {
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .floating-btn:hover {
+                background: red;
+            }
+    </style>
+</head>
+      
+        @if (movieDetails != null)
+        {
+<body>
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Danh sách ghế</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="ghe-list">
+                        @if (movieDetails?.Ghes != null)
+                        {
+                                <div class="row">
+                            @foreach (var ghe in movieDetails.Ghes)
+                                {
+                                    
+                                        <div class="col-md-3 mb-3">
+                                            <div class="d-flex align-items-center justify-content-center">
+                                                <NavLink class="btn btn-outline-primary" href="#" @onclick="ReloadPage">
+                                                    @ghe.TenGhe
+                                                </NavLink>
+                                            </div>
+                                        </div>
+                                    
+                            }
+                                </div>
+                        }
+                        else
+                        {
+                            <p>Không có dữ liệu ghế.</p>
+                        }
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <!-- Main Content -->
+    <div class="container">
+  
+            @foreach (var phim in movieDetails.Phims)
+            {
+                <div class="col-lg-3 mt-3">
+                    <img src="/uploads/@phim.HinhAnh" alt="@phim.TenPhim" class="img-fluid">
+                </div>
+               
+                <div class="col-lg-9">
+                    <div class="black-bg p-4">
+                        <div>
+                            <h2>@phim.TenPhim</h2>
+                            <p>Dạng Phim: <span class="badge bg-warning">@phim.DangPhim</span></p>
+                            <p>Thể Loại: @phim.LoaiPhim?.TenLoai</p>
+                        </div>
+                        <button class="btn btn-danger trailer-button floating-btn">Xem Trailer</button>
+                    </div>
+                    <div class="movie-details">
+                        <h5>Diễn viên: @phim.DienVien</h5>
+                        <h5>Thời lượng: @phim.ThoiLuong phút</h5>
+                        <div class="row justify-content-center">
+                            <div class="col-6">
+                                <div class="bg-danger text-white p-3 text-center" id="cinema-info" style="cursor: pointer;">
+                                    <h2>Mua Vé</h2>
+                                </div>
+                                <div class="border border-danger p-3" id="showtimes" style="display: block;">
+                                    @if (movieDetails.NgayChieus.Any(cc => cc.Phim == phim.IdPhim))
+                                    {
+                                        @foreach (var cachieu in movieDetails.NgayChieus.Where(cc => cc.Phim == phim.IdPhim))
+                                        {
+                                            <div class="card mb-3">
+                                                <div class="card-header">
+                                                    <p class="card-text">Ngày chiếu: @cachieu.NgayChieuPhim.ToString("dd/MM/yyyy")</p>
+                                                </div>
+                                                <div class="card-body">
+                                                    @if (movieDetails.GioChieus != null && movieDetails.GioChieus.Any())
+                                                    {
+                                                        <h6 class="card-subtitle mb-2 text-muted">Danh sách giờ chiếu:</h6>
+                                                        <div class="btn-toolbar justify-content-start" role="toolbar" aria-label="Lịch xem">
+                                                            @foreach (var giochieu in movieDetails.GioChieus)
+                                                            {
+                                                                <div class="btn-group me-2" role="group">
+                                                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="@giochieu.IdGioChieu" data-phim-id="@phim.IdPhim">
+                                                                        @giochieu.GioBatDau.ToString(@"hh\:mm") - @giochieu.GioKetThuc.ToString(@"hh\:mm")
+                                                                    </button>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <p>Chưa có giờ chiếu</p>
+                                                    }
+                                                </div>
+                                                <div class="card-footer">
+                                                    <small class="text-muted">Trạng thái: @cachieu.TrangThai</small>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <p>Không có suất chiếu</p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+    </div>
+        <script src="js/chitietphim.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
+
+</body>
+
+}
+else
+{
+    <p>Loading...</p>
+}
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    public Multimodel movieDetails;
+    private void ReloadPage()
+    {
+        // Điều hướng lại trang hiện tại
+        NavigationManager.NavigateTo("/thanhtoan", true);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FetchMovieDetails();
+    }
+    public async Task FetchMovieDetails()
+    {
+        try
+        {
+            var response = await Http.GetAsync($"api/ChiTiet/GetChiTiet/{Id}");
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+
+            var settings = new JsonSerializerSettings
+                {
+                    PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                    Converters = { new CustomTimeSpanConverter() },
+                    ContractResolver = new CamelCasePropertyNamesContractResolver()
+            };
+
+            movieDetails = JsonConvert.DeserializeObject<Multimodel>(jsonResponse, settings);
+        }
+        catch (Exception ex)
+        {
+            await JS.InvokeVoidAsync("console.log", ex.Message);
+        }
+    }
+}
+
+
