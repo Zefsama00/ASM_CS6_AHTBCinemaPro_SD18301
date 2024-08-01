@@ -44,6 +44,8 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server
             });
             services.AddHttpClient(); // 
             services.AddRazorPages();
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
