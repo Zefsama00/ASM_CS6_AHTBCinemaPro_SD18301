@@ -5,7 +5,7 @@
 @inject IFileReaderService fileReader
 @inject HttpClient client
 
-<h1>UpLoadAnh</h1>
+<h1>Upload Image</h1>
 <div class="row">
     <div class="col-4">
         <div class="form-group">
@@ -58,7 +58,10 @@
 
         using (var ms = await file.CreateMemoryStreamAsync((int)fileInfo.Size))
         {
-            fileStream = ms;
+            fileStream = new MemoryStream();
+            await ms.CopyToAsync(fileStream);
+            fileStream.Position = 0;
+
             var buffer = new byte[fileInfo.Size];
             ms.Position = 0;
             await ms.ReadAsync(buffer, 0, (int)fileInfo.Size);
@@ -76,16 +79,23 @@
 
         var content = new MultipartFormDataContent();
         fileStream.Position = 0;
-        content.Add(new StreamContent(fileStream), "file", fileName);
+        content.Add(new StreamContent(fileStream), "image", fileName);
+        string url = "http://localhost:38110";
 
-        var response = await client.PostAsync("your-upload-url-here", content);
+        var response = await client.PostAsync($"{url}/api/images", content);
         if (response.IsSuccessStatusCode)
         {
-            message = "File has been uploaded";
+            var uploadedFileName = await response.Content.ReadAsStringAsync();
+            imagePath = $"{url}/{uploadedFileName}";
+            message = "File has been uploaded successfully.";
         }
         else
         {
-            message = "File upload failed";
+            message = "File upload failed.";
         }
+
+        // Dispose the stream after upload to free resources
+        fileStream.Dispose();
+        fileStream = null;
     }
 }

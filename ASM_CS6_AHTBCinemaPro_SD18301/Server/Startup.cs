@@ -43,8 +43,10 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server
             else
             {
                 app.UseExceptionHandler("/Error");
+                app.UseHsts();
             }
 
+            app.UseHttpsRedirection();
             app.UseBlazorFrameworkFiles();
             app.UseStaticFiles();
 

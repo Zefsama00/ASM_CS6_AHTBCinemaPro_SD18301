@@ -15,19 +15,21 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
         private readonly IHostEnvironment _environment;
         public ImagesController(IHostEnvironment environment)
         {
-            this._environment = environment;
+            _environment = environment;
         }
+
         [HttpPost]
-        public async Task<IActionResult> Post([FromForm]IFormFile image)
+        public async Task<IActionResult> Post([FromForm] IFormFile image)
         {
             if (image == null || image.Length == 0)
-                return BadRequest("Upload a  file");
+                return BadRequest("Upload a file");
+
             string fileName = image.FileName;
             string extension = Path.GetExtension(fileName);
 
-            string[] allowedExtensions = { ".jpg", "png", "bmp" };
+            string[] allowedExtensions = { ".jpg", ".png", ".bmp" };
 
-            if (!allowedExtensions.Contains(extension))
+            if (!allowedExtensions.Contains(extension.ToLower()))
                 return BadRequest("File is not a valid image");
 
             string newFileName = $"{Guid.NewGuid()}{extension}";
@@ -37,8 +39,8 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
             {
                 await image.CopyToAsync(fileStream);
             }
+
             return Ok($"Images/{newFileName}");
         }
     }
 }
- 
