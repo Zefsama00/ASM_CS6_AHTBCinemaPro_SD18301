@@ -69,31 +69,33 @@
                     </div>
                     <div class="modal-body">
                         <div id="ghe-list">
-                        @if (movieDetails?.Ghes != null)
-                        {
+                            @if (movieDetails?.Ghes != null)
+                            {
                                 <div class="row">
-                            @foreach (var ghe in movieDetails.Ghes)
-                                {
-                                    
+                                    @foreach (var ghe in movieDetails.Ghes)
+                                    {
                                         <div class="col-md-3 mb-3">
                                             <div class="d-flex align-items-center justify-content-center">
-                                                <NavLink class="btn btn-outline-primary" href="#" @onclick="ReloadPage">
+                                                <button class="btn @(selectedSeats.Contains(ghe.IdGhe) ? "btn-primary" : "btn-outline-primary")"
+                                                        @onclick="() => ToggleSeat(ghe.IdGhe)">
                                                     @ghe.TenGhe
-                                                </NavLink>
+                                                </button>
                                             </div>
                                         </div>
-                                    
-                            }
+                                    }
                                 </div>
-                        }
-                        else
-                        {
-                            <p>Không có dữ liệu ghế.</p>
-                        }
+                               
+                            }
+                            else
+                            {
+                                <p>Không có dữ liệu ghế.</p>
+                            }
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        <button class="btn btn-success" @onclick="ConfirmSelection">
+                            Xác nhận
+                        </button>
                     </div>
                 </div>
             </div>
@@ -188,16 +190,49 @@ else
     public string Id { get; set; }
 
     public Multimodel movieDetails;
-    private void ReloadPage()
+    private List<string> selectedSeats = new List<string>();
+
+    private void ToggleSeat(string seatId)
     {
-        // Điều hướng lại trang hiện tại
-        NavigationManager.NavigateTo("/thanhtoan", true);
+        if (selectedSeats.Contains(seatId))
+        {
+            selectedSeats.Remove(seatId);
+        }
+        else
+        {
+            selectedSeats.Add(seatId);
+        }
+    }
+
+    private void ConfirmSelection()
+    {
+        var idPhim = movieDetails.Phims.FirstOrDefault()?.IdPhim;
+        var ngayChieu = movieDetails.NgayChieus.FirstOrDefault();
+        var idCaChieu = ngayChieu?.IdCaChieu ?? 0;
+        var idGioChieu = ngayChieu?.GioChieus.FirstOrDefault()?.IdGioChieu ?? 0;
+
+        int numberOfSeats = selectedSeats.Count;
+        int pricePerSeat = 45000;
+        int totalPrice = numberOfSeats * pricePerSeat;
+
+        // Điều hướng đến trang thanh toán với các thông tin cần thiết
+        NavigationManager.NavigateTo($"/thanhtoan/{string.Join(",", selectedSeats)}/{idPhim}/{idCaChieu}/{idGioChieu}/{totalPrice}", true);
+    }
+
+    private void ReloadPage(string seatId, string idPhim, int idCaChieu, int idGioChieu)
+    {
+        // Ghi log để kiểm tra
+        Console.WriteLine($"Navigating to /thanhtoan/{seatId}/{idPhim}/{idCaChieu}/{idGioChieu}");
+
+        // Điều hướng đến trang thanh toán với ID ghế, phim, ca chiếu và giờ chiếu, làm mới trang
+        NavigationManager.NavigateTo($"/thanhtoan/{seatId}/{idPhim}/{idCaChieu}/{idGioChieu}", true);
     }
 
     protected override async Task OnInitializedAsync()
     {
         await FetchMovieDetails();
     }
+
     public async Task FetchMovieDetails()
     {
         try
@@ -210,7 +245,7 @@ else
                     PreserveReferencesHandling = PreserveReferencesHandling.Objects,
                     Converters = { new CustomTimeSpanConverter() },
                     ContractResolver = new CamelCasePropertyNamesContractResolver()
-            };
+                };
 
             movieDetails = JsonConvert.DeserializeObject<Multimodel>(jsonResponse, settings);
         }
@@ -220,5 +255,4 @@ else
         }
     }
 }
-
 

@@ -72,29 +72,31 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
 
             return Ok(seatNames);
         }
-        public IActionResult ThanhToan(string id, string idphim, int gioChieuId, string username)
+        [HttpPost]
+        public async Task<IActionResult> ThanhToan(string id, string idphim, int gioChieuId)
         {
-            // Tìm vé dựa trên id ghế
-            var ve = _context.Ves.FirstOrDefault(x => x.Ghe == id);
-            var phim = _context.Phims.FirstOrDefault(f => f.IdPhim == idphim);
-            // Lấy thông tin ca chiếu dựa trên gioChieuId
-            var cachieu = _context.GioChieus
-                .Include(c => c.CaChieus) // Đảm bảo load thông tin phim
-                .FirstOrDefault(x => x.IdGioChieu == gioChieuId);
-            var userid = _context.Users.Where(x => x.Username == username).FirstOrDefault();
+            // Lấy thông tin phim
+            var phim = await _context.Phims.FirstOrDefaultAsync(f => f.IdPhim == idphim);
 
-            //GioChieu
-            var giochieu = _context.GioChieus.FirstOrDefault(n => n.IdGioChieu == gioChieuId);
+            // Lấy thông tin ca chiếu dựa trên gioChieuId
+            var cachieu = await _context.GioChieus
+                .Include(c => c.CaChieus)
+                .FirstOrDefaultAsync(x => x.IdGioChieu == gioChieuId);
+
+            // Lấy thông tin giờ chiếu
+            var giochieu = await _context.GioChieus.FirstOrDefaultAsync(n => n.IdGioChieu == gioChieuId);
+
+            var ve = _context.Ves.FirstOrDefault(x => x.Ghe == id);
 
 
             // Chuẩn bị ViewModel để gửi tới view
             var viewModel = new Multimodel
             {
-                NgayChieus = new List<NgayChieu> { cachieu.CaChieus },
-                Ghes = _context.Ghes.Where(g => g.IdGhe == id).ToList(),
+                NgayChieus = cachieu?.CaChieus != null ? new List<NgayChieu> { cachieu.CaChieus } : new List<NgayChieu>(),
+                Ghes = await _context.Ghes.Where(g => g.IdGhe == id).ToListAsync(),
                 GioChieus = new List<GioChieu> { giochieu },
-                Ves = new List<Ve> { ve },
                 Phims = new List<Phim> { phim },
+                Ves = new List<Ve> { ve },
             };
 
             return Ok(viewModel);

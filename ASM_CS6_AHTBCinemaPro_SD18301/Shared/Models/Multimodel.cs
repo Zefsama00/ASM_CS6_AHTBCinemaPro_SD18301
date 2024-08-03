@@ -14,5 +14,6 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Shared.Models
         public List<NgayChieu> NgayChieus { get; set; }
         public List<GioChieu> GioChieus { get; set; }
         public List<Ve> Ves { get; set; }
+        public float GiaVe { get; set; } 
     }
 }
