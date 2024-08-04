@@ -15,10 +15,17 @@
 
 <body>
     <div id="app">Loading...</div>
-
+    <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+    <df-messenger intent="WELCOME"
+                  chat-title="AHTB"
+                  agent-id="1d7e69a5-742b-4cab-bdeb-3e827f2af7a3"
+                  language-code="vi"></df-messenger>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="js/chitietphim.js"></script>
+    <script src="js/thanhtoan.js"></script>
     <script src="_framework/blazor.webassembly.js"></script>
     <script>navigator.serviceWorker.register('service-worker.js');</script>
+    <script src="https://www.paypal.com/sdk/js?client-id=AWLKO59WZeVEcCdTfSleTG6Z4WjkOwWmR_ZGDV6RrE9Lb5WCsu2B0ebJZVSu4iTY1sp70TuAvoZSJ8Ci"></script>
 </body>
 
 </html>

@@ -181,24 +181,9 @@
 <body>
     <div class="container">
         <div class="row">
-            <div class="col-lg-4 mb-lg-0 mb-3">
-                <div class="card p-3">
-                    <img src="/Image/qrthanhtoan.jpg" alt="">
-                </div>
-            </div>
-            <div class="col-lg-4 mb-lg-0 mb-3">
-                <div class="card p-3">
-                    <img src="/Image/qrthanhtoan2.jpg" alt="">
-                </div>
-            </div>
-            <div class="col-lg-4 mb-lg-0 mb-3">
-                <div class="card p-3">
-                    <img src="/Image/qrthanhtoan3.jpg" alt="">
-                </div>
-            </div>
             <div class="col-12 mt-4">
                 <div class="card p-3">
-                    <p class="mb-0 fw-bold h4">Phương thức thanh toán</p>
+                    <p class="mb-0 fw-bold h4">Thông tin thanh toán</p>
                 </div>
             </div>
             <div class="col-12">
@@ -275,7 +260,9 @@
                                     <form action="" class="form">
                                         <div class="row">
                                             <div class="col-12">
-                                                <div class="btn btn-primary w-100" id="payBtn">Tạo mã giao dịch</div>
+                                                <div id="paypal-container">
+                                                    <div id="paypal-button-container"></div>
+                                                </div>
                                             </div>
                                             <div id="message" class="message"></div>
                                         </div>
@@ -286,38 +273,11 @@
                     </div>
                 </div>
             </div>
+            
         </div>
     </div>
 </body>
-@* <script>
-    // Biến cờ để theo dõi xem mã giao dịch đã được tạo hay chưa
-    var transactionCreated = false;
 
-    document.getElementById('payBtn').addEventListener('click', function () {
-        // Kiểm tra nếu mã giao dịch đã được tạo
-        if (transactionCreated) {
-            alert('Mã giao dịch đã được tạo. Vui lòng kiểm tra lại.');
-            return;
-        }
-
-        // Hiển thị thông báo đợi duyệt
-        var messageDiv = document.getElementById('message');
-        messageDiv.style.display = 'block';
-        messageDiv.innerHTML = 'Đang tạo mã giao dịch...';
-
-        // Tạo mã giao dịch ngẫu nhiên
-        var transactionId = 'GD' + Math.floor(Math.random() * 1000000);
-        transactionCreated = true; // Đánh dấu mã giao dịch đã được tạo
-
-        // Vô hiệu hóa nút "Thanh toán"
-        document.getElementById('payBtn').disabled = true;
-
-        // Cập nhật thông báo với mã giao dịch sau một thời gian ngắn
-        setTimeout(function () {
-            messageDiv.innerHTML = 'Tạo mã giao dịch thành công. Mã giao dịch của bạn là: ' + transactionId + '.<br>Nếu chuyển sai nội dung thanh toán hãy liên hệ chăm sóc khách hàng để được an ủi';
-        }, 2000); // Thời gian chờ 2 giây (2000 milliseconds)
-    });
-</script> *@
 @code {
     [Parameter]
     public string SeatId { get; set; }
@@ -384,4 +344,19 @@
             isLoading = false; // Kết thúc quá trình tải dữ liệu
         }
     }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("initializeCheckout", TotalPrice);
+        }
+    }
+    // private void TogglePayPalButtonVisibility()
+    // {
+
+    //     Console.WriteLine("Showing PayPal button");
+    //     JS.InvokeVoidAsync("showPayPalButton");
+    //     Console.WriteLine("Hiding PayPal button");
+    //     JS.InvokeVoidAsync("hidePayPalButton");
+    // }
 }
