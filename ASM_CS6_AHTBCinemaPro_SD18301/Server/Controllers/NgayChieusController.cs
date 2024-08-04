@@ -1,5 +1,6 @@
 ﻿using ASM_CS6_AHTBCinemaPro_SD18301.Data;
 using ASM_CS6_AHTBCinemaPro_SD18301.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -27,7 +28,7 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
             var ngayChieus = await _context.NgayChieus.ToListAsync();
 
             if (ngayChieus == null || !ngayChieus.Any())
-            {
+                {
                 return NotFound(new { Message = "No show dates found." });
             }
 
