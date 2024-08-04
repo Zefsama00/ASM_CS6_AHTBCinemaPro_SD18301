@@ -27,6 +27,7 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
             var gioChieus = await _context.GioChieus
                 .Select(g => new GioChieuViewModel
                 {
+                    Cachieu = g.CaChieus.Phims.TenPhim + " - " + " Số phòng "+ g.CaChieus.Phongs.SoPhong +" - " + g.CaChieus.NgayChieuPhim.ToString("dd/MM/yyyy"),
                     IdGioChieu = g.IdGioChieu,
                     GioBatDau = g.GioBatDau.ToString(@"hh\:mm"), // Chuyển đổi TimeSpan thành giờ và phút
                     GioKetThuc = g.GioKetThuc.ToString(@"hh\:mm"),
@@ -44,10 +45,18 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
                 return BadRequest(ModelState);
             }
 
+            if (!TimeSpan.TryParse(gioChieuViewModel.GioBatDau, out TimeSpan gioBatDau) ||
+                !TimeSpan.TryParse(gioChieuViewModel.GioKetThuc, out TimeSpan gioKetThuc) ||
+                gioBatDau >= gioKetThuc)
+            {
+                return BadRequest("Thời gian không hợp lệ.");
+            }
+
             var gioChieu = new GioChieu
             {
-                GioBatDau = TimeSpan.Parse(gioChieuViewModel.GioBatDau),
-                GioKetThuc = TimeSpan.Parse(gioChieuViewModel.GioKetThuc),
+                GioBatDau = gioBatDau,
+                GioKetThuc = gioKetThuc,
+                Cachieu = gioChieuViewModel.CaChieuId,
                 TrangThai = gioChieuViewModel.TrangThai
             };
 

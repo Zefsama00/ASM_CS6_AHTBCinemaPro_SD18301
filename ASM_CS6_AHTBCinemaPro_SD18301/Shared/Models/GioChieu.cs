@@ -22,6 +22,7 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Models
         public int Cachieu { get; set; }
         public NgayChieu CaChieus { get; set; }
 
+        [Required(ErrorMessage = "Trạng thái là bắt buộc.")]
         public string TrangThai { get; set; }
 
         public ICollection<Ve> Ves { get; set; }

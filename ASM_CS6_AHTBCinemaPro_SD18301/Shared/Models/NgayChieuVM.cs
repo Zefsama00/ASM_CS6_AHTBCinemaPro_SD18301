@@ -9,7 +9,7 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Models
     {
         public int IdCaChieu { get; set; }
        
-        public string Phong { get; set; }
+        public int Phong { get; set; }
    
         public string Phim { get; set; }
 
