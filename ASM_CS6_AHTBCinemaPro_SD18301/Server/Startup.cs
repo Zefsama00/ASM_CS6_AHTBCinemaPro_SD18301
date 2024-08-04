@@ -1,4 +1,5 @@
 using ASM_CS6_AHTBCinemaPro_SD18301.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -6,7 +7,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using System.Linq;
+using System.Text;
 using System.Text.Json.Serialization;
 
 namespace ASM_CS6_AHTBCinemaPro_SD18301.Server
@@ -42,8 +45,23 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server
                                .AllowAnyHeader();
                     });
             });
-            services.AddHttpClient(); // 
+            services.AddHttpClient(); 
             services.AddRazorPages();
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+       .AddJwtBearer(options =>
+       {
+           options.TokenValidationParameters = new TokenValidationParameters
+           {
+               ValidateIssuer = true,
+               ValidateAudience = true,
+               ValidateLifetime = true,
+               ValidateIssuerSigningKey = true,
+               ValidIssuer = Configuration["Jwt:Issuer"],
+               ValidAudience = Configuration["Jwt:Audience"],
+               IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+           };
+       });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

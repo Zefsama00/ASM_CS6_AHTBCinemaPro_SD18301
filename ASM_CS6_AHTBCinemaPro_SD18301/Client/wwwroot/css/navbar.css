@@ -10,6 +10,7 @@ body {
     height: 100vh;
     background-size: cover;
     background-position: center;
+    color: #ffffff;
 }
 
 header {
@@ -30,14 +31,16 @@ header {
     letter-spacing: 1.5px;
     cursor: pointer;
 }
-nav{
-    margin-top:10px
+
+nav {
+    margin-top: 10px
 }
-nav li {
-    display: inline-block;
-    list-style: none;
-    padding: 0px 30px;
-}
+
+    nav li {
+        display: inline-block;
+        list-style: none;
+        padding: 0px 30px;
+    }
 
 a, button {
     font-size: 16px;
@@ -46,20 +49,23 @@ a, button {
     text-decoration: none;
     cursor: pointer;
 }
-button a{
-    text-decoration:none;
-  
-}
-    button a:hover {
+
+    button a {
         text-decoration: none;
-        color: white;
     }
+
+        button a:hover {
+            text-decoration: none;
+            color: white;
+        }
+
 button {
     background: rgba(0,0,0,0.2);
     border: 2px solid #fd5e53;
     border-radius: 50px;
     padding: 9px 25px;
 }
+
 nav li a:hover {
     text-decoration: none;
     font-size: 19px;

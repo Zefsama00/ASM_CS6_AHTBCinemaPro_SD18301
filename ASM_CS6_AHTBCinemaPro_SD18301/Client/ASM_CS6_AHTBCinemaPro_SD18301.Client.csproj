@@ -42,6 +42,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="Pages\Admin\IndexAdmin.razor" />
+    <None Include="Pages\Admin\SharedAdmin\_LayoutAdmin.razor" />
     <None Include="wwwroot\Image\app-store.png" />
     <None Include="wwwroot\Image\black-banner.png" />
     <None Include="wwwroot\Image\cartoons\coco.jpg" />
