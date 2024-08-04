@@ -87,6 +87,6 @@ a, .btn-link {
     .scroll-holder .scroll-tray:last-child {
         animation: scroll-tray-hero 150s linear infinite;
     }
-body {
-    background-color: black;
-}
+ body{
+     background-color: black;
+ }

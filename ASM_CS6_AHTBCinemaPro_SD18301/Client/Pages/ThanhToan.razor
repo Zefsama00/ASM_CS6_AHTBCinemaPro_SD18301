@@ -181,6 +181,21 @@
 <body>
     <div class="container">
         <div class="row">
+            <div class="col-lg-4 mb-lg-0 mb-3">
+                <div class="card p-3">
+                    <img src="/Image/qrthanhtoan.jpg" alt="">
+                </div>
+            </div>
+            <div class="col-lg-4 mb-lg-0 mb-3">
+                <div class="card p-3">
+                    <img src="/Image/qrthanhtoan2.jpg" alt="">
+                </div>
+            </div>
+            <div class="col-lg-4 mb-lg-0 mb-3">
+                <div class="card p-3">
+                    <img src="/Image/qrthanhtoan3.jpg" alt="">
+                </div>
+            </div>
             <div class="col-12 mt-4">
                 <div class="card p-3">
                     <p class="mb-0 fw-bold h4">Thông tin thanh toán</p>
@@ -207,23 +222,23 @@
                                     {
                                         @foreach (var phim in multiModel.Phims)
                                         {
-                                            <p class="mb-0">
-                                                <span class="fw-bold">Tên phim:</span>
+                                    <p class="mb-0">
+                                        <span class="fw-bold">Tên phim:</span>
                                                 <span class="c-green">@phim.TenPhim</span>
-                                            </p>
+                                    </p>
 
                                             @if (multiModel?.NgayChieus != null && multiModel.NgayChieus.Any())
                                             {
                                                 @foreach (var ngayChieu in multiModel.NgayChieus)
                                                 {
-                                                    <p class="mb-0">
-                                                        <span class="fw-bold">Ngày chiếu:</span>
+                                    <p class="mb-0">
+                                        <span class="fw-bold">Ngày chiếu:</span>
                                                         <span class="c-green">@ngayChieu.NgayChieuPhim.ToString("dd/MM/yyyy")</span>
-                                                    </p>
+                                    </p>
 
                                                     @if (ngayChieu.GioChieus != null && ngayChieu.GioChieus.Any())
                                                     {
-                                                        <p class="mb-0">
+                                    <p class="mb-0">
                                                             <span class="fw-bold">Giờ chiếu:</span>
                                                             @foreach (var gioChieu in ngayChieu.GioChieus)
                                                             {
@@ -231,7 +246,7 @@
                                                                     @gioChieu.GioBatDau.ToString(@"hh\:mm") - @gioChieu.GioKetThuc.ToString(@"hh\:mm")
                                                                 </span>
                                                             }
-                                                        </p>
+                                    </p>
                                                     }
                                                     else
                                                     {
@@ -262,7 +277,7 @@
                                             <div class="col-12">
                                                 <div id="paypal-container">
                                                     <div id="paypal-button-container"></div>
-                                                </div>
+                                            </div>
                                             </div>
                                             <div id="message" class="message"></div>
                                         </div>
