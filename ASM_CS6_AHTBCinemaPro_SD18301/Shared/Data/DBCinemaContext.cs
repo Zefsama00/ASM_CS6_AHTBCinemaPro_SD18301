@@ -6,7 +6,7 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Data
 {
     public class DBCinemaContext  : DbContext
     {
-        public DbSet<NgayChieu> CaChieus { get; set; }
+        public DbSet<NgayChieu> NgayChieus { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<GioChieu> GioChieus { get; set; }
         public DbSet<Ghe> Ghes { get; set; }
@@ -63,6 +63,9 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Data
               .HasOne(p => p.Phongs)
               .WithMany(c => c.CaChieu)
               .HasForeignKey(p => p.Phong);
+            modelBuilder.Entity<NgayChieu>()
+        .Property(nc => nc.IdCaChieu)
+        .ValueGeneratedOnAdd();
             modelBuilder.Entity<Ve>()
               .HasOne(p => p.GioChieus)
               .WithMany(c => c.Ves)

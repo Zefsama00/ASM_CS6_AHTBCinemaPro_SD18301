@@ -33,7 +33,7 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Models
             var caChieu = context.ObjectInstance as NgayChieu;
             var dbContext = context.GetService(typeof(DBCinemaContext)) as DBCinemaContext;
 
-            var existingCaChieu = dbContext.CaChieus
+            var existingCaChieu = dbContext.NgayChieus
                 .FirstOrDefault(c => c.Phim == caChieu.Phim && c.Phong == caChieu.Phong && c.NgayChieuPhim.Date == ngayChieu.Date && c.IdCaChieu != caChieu.IdCaChieu);
 
             if (existingCaChieu != null)

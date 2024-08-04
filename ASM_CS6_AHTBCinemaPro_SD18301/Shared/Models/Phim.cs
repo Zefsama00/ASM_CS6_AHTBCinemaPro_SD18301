@@ -18,7 +18,6 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Models
         [Required(ErrorMessage = "Không được bỏ trống dạng phim")]
         public string DangPhim { get; set; }
         [ForeignKey("LoaiPhim")]
-        //IdLoaiPhim
         public string TheLoai { get; set; }
         public virtual LoaiPhim LoaiPhim { get; set; }
         [Required(ErrorMessage = "Không được bỏ trống thời lượng")]

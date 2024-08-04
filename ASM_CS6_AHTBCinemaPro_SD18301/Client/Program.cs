@@ -8,6 +8,10 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using ASM_CS6_AHTBCinemaPro_SD18301.Client;
+using System.Text.Json;
+using System.Globalization;
+using System.Text.Json.Serialization;
 
 
 namespace ASM_CS6_AHTBCinemaPro_SD18301.Client
@@ -24,8 +28,32 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Client
             {
                 client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
             });
+            builder.Services.AddSingleton(new JsonSerializerOptions
+            {
+                Converters = { new CustomDateConverter("yyyy-MM-dd") }
+            });
 
             await builder.Build().RunAsync();
+        }
+        public class CustomDateConverter : JsonConverter<DateTime>
+        {
+            private readonly string _dateFormat;
+
+            public CustomDateConverter(string dateFormat)
+            {
+                _dateFormat = dateFormat;
+            }
+
+            public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            {
+                var dateString = reader.GetString();
+                return DateTime.ParseExact(dateString, _dateFormat, CultureInfo.InvariantCulture);
+            }
+
+            public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
+            {
+                writer.WriteStringValue(value.ToString(_dateFormat));
+            }
         }
     }
 }

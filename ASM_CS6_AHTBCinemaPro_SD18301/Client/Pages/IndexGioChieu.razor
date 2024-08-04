@@ -1,0 +1,63 @@
+﻿@page "/giochieulist"
+@using ASM_CS6_AHTBCinemaPro_SD18301.Models
+@using Newtonsoft.Json
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+<h3>Danh Sách Giờ Chiếu</h3>
+
+<button class="btn btn-primary" @onclick="AddGioChieu">Thêm Giờ Chiếu</button>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Mã Giờ Chiếu</th>
+            <th>Giờ Bắt Đầu</th>
+            <th>Giờ Kết Thúc</th>
+            <th>Trạng Thái</th>
+            <th>Thao Tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var giochieu in gioChieus)
+        {
+            <tr>
+                <td>@giochieu.IdGioChieu</td>
+                <td>@giochieu.GioBatDau</td>
+                <td>@giochieu.GioKetThuc</td>
+                <td>@giochieu.TrangThai</td>
+                <td>
+                    <button class="btn btn-warning" @onclick="() => EditGioChieu(giochieu.IdGioChieu)">Sửa</button>
+                  @*   <button class="btn btn-danger" @onclick="() => DeleteGioChieu(giochieu.IdGioChieu)">Xóa</button> *@
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<GioChieu> gioChieus ;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await Http.GetStringAsync("api/GioChieu/giochieu");
+        gioChieus = JsonConvert.DeserializeObject<List<GioChieu>>(response);
+    }
+
+    private void AddGioChieu()
+    {
+        Navigation.NavigateTo("/giochieuform");
+    }
+
+    private void EditGioChieu(int id)
+    {
+        Navigation.NavigateTo($"/giochieuform/{id}");
+    }
+
+    private async Task DeleteGioChieu(int id)
+    {
+        await Http.DeleteAsync($"api/GioChieu/{id}");
+        var response = await Http.GetStringAsync("api/GioChieu/giochieu");
+        gioChieus = JsonConvert.DeserializeObject<List<GioChieu>>(response);
+    }
+}

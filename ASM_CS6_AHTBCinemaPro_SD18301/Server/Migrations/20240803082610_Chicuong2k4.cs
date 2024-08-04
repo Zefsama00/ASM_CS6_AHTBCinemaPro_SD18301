@@ -2,7 +2,7 @@
 
 namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Migrations
 {
-    public partial class chicuong : Migration
+    public partial class Chicuong2k4 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
