@@ -1,6 +1,9 @@
 ﻿@page "/gioithieu"
-@{
-}
+@using ASM_CS6_AHTBCinemaPro_SD18301.Models
+@using ASM_CS6_AHTBCinemaPro_SD18301.Shared.Models
+@inject HttpClient HttpClient
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
 
 <!DOCTYPE html>
 <html lang="en">
@@ -9,6 +12,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link href="css/navbar.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <style>
@@ -17,7 +21,9 @@
             margin: auto;
             min-height: 200px;
         }
-    
+        .carousel {
+            position : absolute;
+        }
     </style>
 </head>
 <body>
@@ -45,7 +51,7 @@
                 <p>Tiêu Anh Duy, Nguyễn Nguyễn, Phan Vũ Thành Khang, Lương Chí Cường, Nguyễn Ngọc Mẫn</p>
             </div>
             <div class="col-sm-4">
-                <div class="well">
+                <div class="well text-black-50">
                     <p>Rạp phim "Anh Hùng Tranh Bá" là điểm đến tuyệt vời cho những người yêu thích các bộ phim hành động, siêu anh hùng mạo hiểm. Sự kết hợp giữa câu chuyện ly kỳ, hiệu ứng đặc sắc và diễn xuất tuyệt vời hứa hẹn mang đến cho khán giả những trải nghiệm đầy kịch tính và hấp dẫn.</p>
                 </div>
             </div>

@@ -42,7 +42,7 @@
                     <div class="content1">
                         <p class="name1">@phim.TenPhim</p>
                         <div class="des1">@phim.DienVien</div>
-                        <button class="btn btn-primary">Xem ngay!</button>
+                        <button class="btn btn-primary" her="/chitiet/@phim.IdPhim">Xem ngay!</button>
                     </div>
                 </div>
             }
@@ -73,7 +73,7 @@
                 <div class="movies-slide carousel-nav-center owl-carousel">
                     @foreach (var phim in phims)
                     {
-                        <a href="#" class="movie-item">
+                        <a href="/chitiet/@phim.IdPhim" class="movie-item">
                             <img src="/image/movies/theatre-dead.jpg" alt="@phim.TenPhim">
                             <div class="movie-item-content">
                                 <div class="movie-item-title">
