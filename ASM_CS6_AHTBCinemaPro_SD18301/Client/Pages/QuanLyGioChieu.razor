@@ -1,0 +1,42 @@
+﻿@page "/giochieus"
+@using ASM_CS6_AHTBCinemaPro_SD18301.Shared.ViewModels
+@using Newtonsoft.Json
+@inject HttpClient Http
+@code {
+    private List<GioChieuViewModel> gioChieus;
+    protected override async Task OnInitializedAsync()
+    {
+        var respone = await Http.GetStringAsync("api/giochieu");
+        gioChieus = JsonConvert.DeserializeObject<List<GioChieuViewModel>>(respone);
+    }
+}
+<h1>Danh sách giờ chiếu</h1>
+
+@if (gioChieus == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Giờ Bắt Đầu</th>
+                <th>Giờ Kết Thúc</th>
+                <th>Trạng Thái</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in gioChieus)
+            {
+                <tr>
+                    <td>@item.GioBatDau</td>
+                    <td>@item.GioKetThuc</td>
+                    <td>@item.TrangThai</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
