@@ -1,0 +1,292 @@
+﻿@page "/Admin/phimlist"
+@using ASM_CS6_AHTBCinemaPro_SD18301.Model
+@using ASM_CS6_AHTBCinemaPro_SD18301.Models
+@using Newtonsoft.Json
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+@using Microsoft.AspNetCore.Components.Forms
+
+<h3>Danh sách phim</h3>
+
+@if (!string.IsNullOrEmpty(AlertMessage))
+{
+    <div class="alert alert-@AlertType alert-dismissible fade show" role="alert">
+        @AlertMessage
+        <a type="button" aria-label="Close" @onclick="() => AlertMessage = null">
+            <i class="fa fa-times" style="margin-left: 5px" aria-hidden="true"></i>
+        </a>
+    </div>
+}
+
+<div class="container">
+    @if (ds == null)
+    {
+        <p><em>Đang tải...</em></p>
+    }
+    else if (ds.Count == 0)
+    {
+        <p>Không có phim nào có sẵn.</p>
+    }
+    else
+    {
+        <div class="row mb-3">
+            <div class="col-md-6 text-end">
+                <button class="btn btn-success" @onclick="ShowAddModal">Thêm phim mới</button>
+            </div>
+        </div>
+
+        <table class="table table-striped table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Tên Phim</th>
+                    <th>Diễn viên</th>
+                    <th>Dạng Phim</th>
+                    <th>Thể loại</th>
+                    <th>Trạng thái</th>
+                    <th>Thời lượng</th>
+                    <th>Hình ảnh</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var phim in ds)
+                {
+                    <tr>
+                        <td>@phim.TenPhim</td>
+                        <td>@phim.DienVien</td>
+                        <td>@phim.DangPhim</td>
+                        <td>@phim.TheLoai</td>
+                        <td>@phim.TrangThai</td>
+                        <td>@phim.ThoiLuong</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(phim.HinhAnh))
+                            {
+                                <img src="Image/@phim.HinhAnh" alt="Hình ảnh phim" style="width: 100px;" />
+                            }
+                        </td>
+                        <td>
+                            <button class="btn btn-warning btn-sm" @onclick="() => EditPhim(phim)">Sửa</button>
+                        
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+<!-- Modal for Add/Edit -->
+@if (IsModalVisible)
+{
+    <div class="modal show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@((isEditing ? "Sửa phim" : "Thêm phim mới"))</h5>
+                    <button type="button" class="btn-close" aria-label="Đóng" @onclick="CloseModal">Đóng</button>
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="@currentPhim" OnValidSubmit="HandleValidSubmit">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+                        <div class="mb-3">
+                            <label for="TenPhim" class="form-label">Tên Phim</label>
+                            <InputText id="TenPhim" class="form-control" @bind-Value="currentPhim.TenPhim" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="DienVien" class="form-label">Diễn viên</label>
+                            <InputText id="DienVien" class="form-control" @bind-Value="currentPhim.DienVien" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="DangPhim" class="form-label">Dạng phim</label>
+                            <InputText id="DangPhim" class="form-control" @bind-Value="currentPhim.DangPhim" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="TheLoai" class="form-label">Thể loại</label>
+                            <InputSelect id="TheLoai" class="form-control" @bind-Value="currentPhim.TheLoai">
+                                <option value="">Chọn thể loại</option>
+                                @foreach (var loaiphims in loaiphim)
+                                {
+                                    <option value="@loaiphims">@loaiphims</option>
+                                }
+                            </InputSelect>
+                        </div>
+                        <div class="mb-3">
+                            <label for="ThoiLuong" class="form-label">Thời lượng</label>
+                            <InputText id="ThoiLuong" class="form-control" @bind-Value="ThoiLuongString" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="HinhAnh" class="form-label">Hình ảnh</label>
+                            <InputFile id="HinhAnh" class="form-control" OnChange="HandleImageUpload" />
+                            @if (!string.IsNullOrEmpty(currentPhim.HinhAnh))
+                            {
+                                <img src="Image/@currentPhim.HinhAnh" alt="Hình ảnh phim" style="width: 100px;" class="mt-2" />
+                            }
+                        </div>
+                        <div class="button" style="float:right; padding: 0 0 30px 0">
+                            <button type="submit" class="btn btn-primary">@((isEditing ? "Lưu thay đổi" : "Thêm phim"))</button>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<PhimVM> ds;
+    private PhimVM currentPhim = new PhimVM();
+    private bool isEditing = false;
+    private string tempImageUrl;
+    private List<string> loaiphim = new List<string>();
+    private bool IsModalVisible = false;
+    private string AlertMessage;
+    private string AlertType;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPhims();
+        await LoadDropdownData();
+    }
+
+    private async Task LoadPhims()
+    {
+        try
+        {
+            var response = await Http.GetStringAsync("api/Phim/listphim");
+            ds = JsonConvert.DeserializeObject<List<PhimVM>>(response);
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            SetAlert("Có lỗi xảy ra khi tải danh sách phim: " + ex.Message, "danger");
+        }
+    }
+
+    private async Task LoadDropdownData()
+    {
+        try
+        {
+            var response = await Http.GetStringAsync("api/LoaiPhim/GetLoaiPhim");
+            loaiphim = JsonConvert.DeserializeObject<List<string>>(response);
+        }
+        catch (Exception ex)
+        {
+            SetAlert("Có lỗi xảy ra khi tải dữ liệu thể loại phim: " + ex.Message, "danger");
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        HttpResponseMessage response;
+
+        try
+        {
+            if (isEditing)
+            {
+                response = await Http.PutAsJsonAsync($"api/Phim/{currentPhim.IdPhim}", currentPhim);
+                if (response.IsSuccessStatusCode)
+                {
+                    await LoadPhims();
+                    currentPhim = new PhimVM();
+                    isEditing = false;
+                    tempImageUrl = null;
+                    CloseModal();
+                    SetAlert("Phim đã được cập nhật thành công!", "success");
+                }
+                else
+                {
+                    var errorMessage = await response.Content.ReadAsStringAsync();
+                    SetAlert($"Có lỗi xảy ra khi cập nhật phim: {errorMessage}", "danger");
+                }
+            }
+            else
+            {
+                response = await Http.PostAsJsonAsync("api/Phim/AddPhim", currentPhim);
+                if (response.IsSuccessStatusCode)
+                {
+                    await LoadPhims();
+                    currentPhim = new PhimVM();
+                    isEditing = false;
+                    tempImageUrl = null;
+                    CloseModal();
+                    SetAlert("Phim đã được thêm thành công!", "success");
+                }
+                else
+                {
+                    var errorMessage = await response.Content.ReadAsStringAsync();
+                    SetAlert($"Có lỗi xảy ra khi thêm phim: {errorMessage}", "danger");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            SetAlert("Có lỗi xảy ra: " + ex.Message, "danger");
+        }
+    }
+
+    private void ShowAddModal()
+    {
+        currentPhim = new PhimVM();
+        isEditing = false;
+        tempImageUrl = null;
+        ShowModal();
+    }
+
+    private void EditPhim(PhimVM phim)
+    {
+        currentPhim = phim;
+        isEditing = true;
+        tempImageUrl = null;
+        ShowModal();
+    }
+
+    private void ShowModal()
+    {
+        IsModalVisible = true;
+    }
+
+    private void CloseModal()
+    {
+        IsModalVisible = false;
+    }
+
+    private async Task HandleImageUpload(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file != null)
+        {
+            var fileName = file.Name;
+            var buffer = new byte[file.Size];
+            await file.OpenReadStream().ReadAsync(buffer);
+            currentPhim.HinhAnh = fileName;
+        }
+    }
+
+
+
+    private void SetAlert(string message, string alertType)
+    {
+        AlertMessage = message;
+        AlertType = alertType;
+        StateHasChanged();
+        _ = Task.Delay(3000).ContinueWith(t =>
+        {
+            AlertMessage = null;
+            InvokeAsync(StateHasChanged);
+        });
+    }
+
+    private string ThoiLuongString
+    {
+        get => currentPhim.ThoiLuong.ToString();
+        set
+        {
+            if (int.TryParse(value, out var result))
+            {
+                currentPhim.ThoiLuong = result;
+            }
+        }
+    }
+}

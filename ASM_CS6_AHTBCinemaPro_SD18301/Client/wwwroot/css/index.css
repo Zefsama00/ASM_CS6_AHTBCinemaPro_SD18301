@@ -298,22 +298,26 @@ img {
     .carousel-nav-center .owl-nav .owl-prev {
         position: absolute;
         left: 5px;
+        font-size: xx-large !important;
     }
 
     .carousel-nav-center .owl-nav .owl-next {
         position: absolute;
         right: 5px;
+        font-size: xx-large !important;
     }
 
 .owl-nav button {
     border: none;
     outline: none;
 }
-
-    .owl-nav button i {
-        background-color: rgba(0, 0, 0, 0.6);
-        border-radius: 50%;
-    }
+button > span {
+    font-size: 1.5em; /* or any other size you prefer */
+}
+.owl-nav button i {
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 50%;
+}
 
     .owl-nav button:hover i {
         color: var(--main-color);

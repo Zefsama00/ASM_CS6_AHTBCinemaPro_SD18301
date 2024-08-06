@@ -1,0 +1,52 @@
+﻿.scroll-holder {
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 10px 0;
+    margin-bottom: 20px;
+}
+
+.scroll-tray > div {
+    display: inline-block;
+    margin-right: 10px;
+    transition: transform 0.3s ease;
+}
+
+    .scroll-tray > div:hover {
+        transform: scale(1.1);
+    }
+
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+    .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .card img {
+        border-radius: 5px;
+    }
+
+.card-title {
+    font-weight: bold;
+    color: #333;
+}
+
+.card-text {
+    color: #666;
+}
+
+.trailer-section {
+    margin-top: 30px;
+}
+
+    .trailer-section iframe {
+        border-radius: 10px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .trailer-section iframe:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
