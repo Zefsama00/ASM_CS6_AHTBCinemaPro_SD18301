@@ -19,7 +19,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var response = await Http.GetStringAsync("api/Phim/GetPhim");
+        var response = await Http.GetStringAsync("api/Phim/listphim");
         phims = JsonConvert.DeserializeObject<List<Phim>>(response);
         await JSRuntime.InvokeVoidAsync("initOwlCarousel");
     }
@@ -38,7 +38,7 @@
             @for (var i = 0; i < displayedPhims.Count; i++)
             {
                 var phim = displayedPhims[i];
-                <div class="item1" style="background-image: url('/image/anhnen1.jpg');" data-index="@phim.IdPhim">
+                <div class="item1" style="background-image: url('/Image/phim/@phim.HinhAnh');" data-index="@phim.IdPhim">
                     <div class="content1">
                         <p class="name1">@phim.TenPhim</p>
                         <div class="des1">@phim.DienVien</div>
@@ -74,7 +74,7 @@
                     @foreach (var phim in phims)
                     {
                         <a href="/chitiet/@phim.IdPhim" class="movie-item">
-                            <img src="/image/movies/theatre-dead.jpg" alt="@phim.TenPhim">
+                            <img src="/Image/phim/@phim.HinhAnh" alt="@phim.TenPhim">
                             <div class="movie-item-content">
                                 <div class="movie-item-title">
                                     @phim.TenPhim

@@ -1,9 +1,11 @@
 ﻿@page "/login"
+@using ASM_CS6_AHTBCinemaPro_SD18301.Client.Service
 @using ASM_CS6_AHTBCinemaPro_SD18301.Models
 @using ASM_CS6_AHTBCinemaPro_SD18301.Shared.Models
-@inject HttpClient HttpClient
+@inject CustomAuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager Navigation
 @inject IJSRuntime JSRuntime
+@inject HttpClient HttpClient
 
 <head>
     <link href="/css/login.css" rel="stylesheet" />

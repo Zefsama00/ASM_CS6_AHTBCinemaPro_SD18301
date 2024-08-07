@@ -1,0 +1,298 @@
+﻿@page "/QLGC"
+@using ASM_CS6_AHTBCinemaPro_SD18301.Models
+@using ASM_CS6_AHTBCinemaPro_SD18301.Shared.ViewModels
+@using Newtonsoft.Json
+@inject HttpClient Http
+@inject IJSRuntime JS
+@inject NavigationManager Navigation
+<link href="~/css/GC.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+@using ASM_CS6_AHTBCinemaPro_SD18301.Client.Pages.Admin.SharedAdmin
+@layout _LayoutAdmin
+
+@code {
+    private List<GioChieuViewModel> gioChieus;
+    private List<NgayChieuVM> NgayChieus;
+    private GioChieuViewModel newGioChieu = new GioChieuViewModel();
+    private string notificationMessage;
+    private string notificationType; // "success" or "error"
+    private bool showAlert;
+    private bool isEditMode = false; // Thêm biến để kiểm tra chế độ chỉnh sửa
+    private int editingGioChieuId = 0; // ID của giờ chiếu đang được chỉnh sửa
+
+    protected override async Task OnInitializedAsync()
+    {
+        showAlert = true;
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        var response = await Http.GetStringAsync("api/giochieu");
+        gioChieus = JsonConvert.DeserializeObject<List<GioChieuViewModel>>(response);
+
+        var caChieuResponse = await Http.GetStringAsync("api/ngaychieus");
+        NgayChieus = JsonConvert.DeserializeObject<List<NgayChieuVM>>(caChieuResponse);
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        HttpResponseMessage response = null;
+        try
+        {
+            if (isEditMode)
+            {
+                response = await Http.PutAsJsonAsync($"api/giochieu/{editingGioChieuId}", newGioChieu);
+            }
+            else
+            {
+                response = await Http.PostAsJsonAsync("api/giochieu", newGioChieu);
+            }
+
+            if (response.IsSuccessStatusCode)
+            {
+                notificationMessage = isEditMode ? "Cập nhật giờ chiếu thành công!" : "Lưu giờ chiếu thành công!";
+                notificationType = "success";
+                showAlert = true;
+
+                // Reset form
+                newGioChieu = new GioChieuViewModel();
+                isEditMode = false; // Reset chế độ chỉnh sửa
+
+                // Ẩn modal
+                await JS.InvokeVoidAsync("hideModal", "#myModal");
+
+                // Gọi hàm để tải lại dữ liệu và cập nhật giao diện
+                await RefreshData();
+                await JS.InvokeVoidAsync("handleAlertAndReload");
+            }
+            else
+            {
+                var errorResponse = await response.Content.ReadAsStringAsync();
+                var errorMessage = isEditMode ? "Cập nhật giờ chiếu thất bại." : "Lưu giờ chiếu thất bại.";
+
+                if (!string.IsNullOrWhiteSpace(errorResponse))
+                {
+                    var errorData = JsonConvert.DeserializeObject<dynamic>(errorResponse);
+                    errorMessage = errorData?.message ?? errorMessage;
+                }
+
+                notificationMessage = errorMessage;
+                notificationType = "error";
+                showAlert = true;
+
+                // Ẩn modal
+                await JS.InvokeVoidAsync("hideModal", "#myModal");
+                await JS.InvokeVoidAsync("handleAlertAndReload");
+            }
+        }
+        catch (Exception ex)
+        {
+            notificationMessage = isEditMode ? "Cập nhật thất bại" : "Lưu thất bại";
+            notificationType = "error";
+            showAlert = true;
+
+            await JS.InvokeVoidAsync("hideModal", "#myModal");
+            await JS.InvokeVoidAsync("handleAlertAndReload");
+        }
+    }
+
+    private async Task RefreshData()
+    {
+        await LoadData();
+        StateHasChanged();
+    }
+
+    private string GetAlertClass(string alertType)
+    {
+        return alertType == "success" ? "alert-success" : "alert-danger";
+    }
+
+    private async Task EditGioChieu(GioChieuViewModel gioChieu)
+    {
+        newGioChieu = new GioChieuViewModel
+            {
+                IdGioChieu = gioChieu.IdGioChieu,
+                GioBatDau = gioChieu.GioBatDau,
+                GioKetThuc = gioChieu.GioKetThuc,
+                Cachieu = gioChieu.Cachieu,
+                TrangThai = gioChieu.TrangThai
+            };
+
+        editingGioChieuId = gioChieu.IdGioChieu;
+        isEditMode = true;
+
+        await JS.InvokeVoidAsync("showModal", "#myModal");
+    }
+
+    [JSInvokable]
+    public async Task SetShowAlert(bool show)
+    {
+        showAlert = show;
+        if (!show)
+        {
+            notificationMessage = string.Empty;
+            notificationType = string.Empty;
+        }
+        await InvokeAsync(StateHasChanged);
+    }
+}
+
+<h1>Danh sách giờ chiếu</h1>
+<button class="btn btn-primary" @onclick='async () => { newGioChieu = new GioChieuViewModel(); isEditMode = false; await JS.InvokeVoidAsync("showModal", "#myModal"); }'> <i class="fas fa-plus"></i> Thêm Giờ Chiếu Mới</button>
+
+@if (showAlert == true)
+{
+    <div id="notificationAlert" class="alert @GetAlertClass(notificationType) alert-dismissible fade" role="alert">
+        @notificationMessage
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}
+
+@if (gioChieus == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table class="table text-dark">
+        <thead>
+            <tr>
+                <th><i class="fas fa-clock"></i> Giờ Bắt Đầu - Giờ Kết Thúc</th>
+                <th><i class="fas fa-calendar-alt"></i> Ngày Chiếu Phim</th>
+                <th><i class="fas fa-info-circle"></i> Trạng Thái</th>
+                <th><i class="fas fa-cogs"></i> Hành Động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in gioChieus)
+            {
+                <tr>
+                    <td>@item.GioBatDau giờ - @item.GioKetThuc giờ</td>
+                    <td>@item.Cachieu</td>
+                    <td>@item.TrangThai</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="async () => await EditGioChieu(item)"><i class="fas fa-edit"></i> Cập nhật</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myModalLabel">
+                    @if (isEditMode)
+                    {
+
+                        <p><i class="fas fa-edit"></i> Cập Nhật Giờ Chiếu</p>
+                    }
+                    else
+                    {
+
+                        <p><i class="fas fa-plus"></i> Thêm Giờ Chiếu Mới</p>
+                    }
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <EditForm Model="newGioChieu" OnValidSubmit="HandleValidSubmit">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <div class="form-group">
+                        <label for="gioBatDau">Giờ Bắt Đầu:</label>
+                        <InputText id="gioBatDau" type="time" class="form-control" @bind-Value="newGioChieu.GioBatDau" />
+                        <ValidationMessage For="@(() => newGioChieu.GioBatDau)" />
+                    </div>
+                    <div class="form-group">
+                        <label for="gioKetThuc">Giờ Kết Thúc:</label>
+                        <InputText id="gioKetThuc" type="time" class="form-control" @bind-Value="newGioChieu.GioKetThuc" />
+                        <ValidationMessage For="@(() => newGioChieu.GioKetThuc)" />
+                    </div>
+                    <div class="form-group">
+                        <label for="caChieu">Ca Chiếu:</label>
+                        @if (isEditMode)
+                        {
+                            <InputText disabled id="caChieu" class="form-control" @bind-Value="newGioChieu.Cachieu" />
+                        }
+                        else
+                        {
+                            <InputSelect id="caChieu" class="form-control" @bind-Value="newGioChieu.CaChieuId">
+                                <option value="">-- Chọn Ca Chiếu --</option>
+                                @if (NgayChieus == null)
+                                {
+                                    <p>Loading...</p>
+                                }
+                                else
+                                {
+                                    @foreach (var caChieu in NgayChieus)
+                                    {
+                                        <option value="@caChieu.IdCaChieu">@caChieu.Phim - @caChieu.NgayChieu - @caChieu.Phong</option>
+                                    }
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="@(() => newGioChieu.CaChieuId)" />
+                        }
+                    </div>
+                    @if (isEditMode)
+                    {
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-edit"></i> Cập Nhật</button>
+                    }
+                    else
+                    {
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Lưu Thông Tin</button>
+                    }
+
+                </EditForm>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+
+    window.showModal = function (selector) {
+        if (typeof $ !== 'undefined') {
+            $(selector).modal('show');
+        } else {
+            console.error('jQuery is not defined.');
+        }
+    }
+
+    window.hideModal = function (selector) {
+        if (typeof $ !== 'undefined') {
+            $(selector).modal('hide');
+        } else {
+            console.error('jQuery is not defined.');
+        }
+
+    }
+
+    window.handleAlertAndReload = function () {
+        $('#notificationAlert').addClass('show');
+        setTimeout(function () {
+
+            $('#notificationAlert').addClass('fade');
+
+            setTimeout(function () {
+                $('#notificationAlert').removeClass('show');
+
+                setTimeout(function () {
+                    Blazor.invokeMethodAsync('SetShowAlert', false);
+                    Blazor.invokeMethodAsync('AssemblyName', 'RefreshData');
+                }, 500);
+            }, 100);
+        }, 3000);
+    }
+</script>

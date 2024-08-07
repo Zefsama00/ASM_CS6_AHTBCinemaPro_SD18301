@@ -1,13 +1,68 @@
 ﻿@inherits LayoutComponentBase
 
-<h3>_AdminLayout</h3>
+<div class="page">
+    <div class="sidebar">
+        <div class="top-row ps-3 navbar navbar-dark">
+            <div class="container-fluid">
+                <button class="button" data-text="Awesome">
+                    <span class="actual-text">&nbsp;AHTB&nbsp;</span>
+                    <span aria-hidden="true" class="hover-text">&nbsp;AHTB&nbsp;</span>
+                </button>
+            </div>
+        </div>
 
-<div class="sidebar">
-    <!-- Sidebar content -->
-    <NavLink href="/admin/dashboard">Dashboard</NavLink>
-    <NavLink href="/admin/settings">Settings</NavLink>
+        <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+
+        <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+            <nav class="flex-column">
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="phimlist" Match="NavLinkMatch.All">
+                        <span aria-hidden="true"></span> Quản lý phim
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="phong">
+                        <span aria-hidden="true"></span> Quản lý phòng
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="QLGC">
+                        <span aria-hidden="true"></span> Quản lý giờ chiếu
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="QLNC">
+                        <span aria-hidden="true"></span> Quản lý ngày chiếu
+                    </NavLink>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            <button class="Btn">
+
+                <div class="sign"><svg viewBox="0 0 512 512"><path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"></path></svg></div>
+
+                <div class="text" >Đăng xuất</div>
+            </button>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    </main>
 </div>
 
-<div class="main-content">
-    @Body
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
 </div>
+@code{
+
+}
