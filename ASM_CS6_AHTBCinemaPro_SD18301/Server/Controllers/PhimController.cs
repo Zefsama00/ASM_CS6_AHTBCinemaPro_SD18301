@@ -29,7 +29,6 @@
             {
                 var phimChuaChieu = await _context.Phims
                     .Include(p => p.CaChieus)
-                    .Where(p => p.CaChieus.Any(nc => nc.TrangThai == "Chưa Chiếu"))
                     .ToListAsync();
 
                 return Ok(phimChuaChieu);
