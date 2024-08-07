@@ -2,20 +2,287 @@
 @inject HttpClient Http
 @using ASM_CS6_AHTBCinemaPro_SD18301.Models
 @using Newtonsoft.Json
-
+<link rel="stylesheet" href="/css/site.css">
+<style>
+    a {
+        color : white;
+    }
+</style>
 <section>
     <div class="scroll-holder">
         <div class="scroll-tray">
-            @* Dynamically generated images *@
-            @if (PhimChuaChieuList != null)
-            {
-                @foreach (var phim in PhimChuaChieuList)
-                {
-                    <div>
-                        <img src="/Image/phim/@phim.HinhAnh" alt="@phim.TenPhim" style="width: 200px; height: 300px; object-fit: cover;" />
-                    </div>
-                }
-            }
+            <div>
+                <img src="/Image/phim/casino.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/fallenangel.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/inception.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/parasite.jpg" alt="Alternate Text" />
+            </div>
+            <div>
+                <img src="/Image/phim/thewolfofwallstreet.jpg" alt="Alternate Text" />
+            </div>
+            <div>
+                <img src="/Image/phim/casino.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/fallenangel.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/inception.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/parasite.jpg" alt="Alternate Text" />
+            </div>
+            <div>
+                <img src="/Image/phim/thewolfofwallstreet.jpg" alt="Alternate Text" />
+            </div>
+            <div>
+                <img src="/Image/phim/casino.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/fallenangel.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/inception.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/parasite.jpg" alt="Alternate Text" />
+            </div>
+            <div>
+                <img src="/Image/phim/thewolfofwallstreet.jpg" alt="Alternate Text" />
+            </div>
+            <div>
+                <img src="/Image/phim/casino.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/fallenangel.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/inception.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/parasite.jpg" alt="Alternate Text" />
+            </div>
+            <div>
+                <img src="/Image/phim/thewolfofwallstreet.jpg" alt="Alternate Text" />
+            </div>
+            <div>
+                <img src="/Image/phim/casino.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/fallenangel.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/inception.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/parasite.jpg" alt="Alternate Text" />
+            </div>
+            <div>
+                <img src="/Image/phim/thewolfofwallstreet.jpg" alt="Alternate Text" />
+            </div>
+            <div>
+                <img src="/Image/phim/casino.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/fallenangel.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/inception.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/parasite.jpg" alt="Alternate Text" />
+            </div>
+            <div>
+                <img src="/Image/phim/thewolfofwallstreet.jpg" alt="Alternate Text" />
+            </div>
+        </div>
+        <div class="scroll-tray">
+            <div>
+                <img src="/Image/phim/joker.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/thedarkknight.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/nowyouseeme.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/godfather.jpg" alt="Alternate Text" />
+            </div>
+            <div>
+                <img src="/Image/phim/haiphuong.jpg" alt="Alternate Text" />
+            </div>
+            <div>
+                <img src="/Image/phim/joker.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/thedarkknight.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/nowyouseeme.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/godfather.jpg" alt="Alternate Text" />
+            </div>
+            <div>
+                <img src="/Image/phim/haiphuong.jpg" alt="Alternate Text" />
+            </div>
+            <div>
+                <img src="/Image/phim/joker.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/thedarkknight.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/nowyouseeme.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/godfather.jpg" alt="Alternate Text" />
+            </div>
+            <div>
+                <img src="/Image/phim/haiphuong.jpg" alt="Alternate Text" />
+            </div>
+            <div>
+                <img src="/Image/phim/joker.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/thedarkknight.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/nowyouseeme.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/godfather.jpg" alt="Alternate Text" />
+            </div>
+            <div>
+                <img src="/Image/phim/haiphuong.jpg" alt="Alternate Text" />
+            </div>
+            <div>
+                <img src="/Image/phim/joker.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/thedarkknight.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/nowyouseeme.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/godfather.jpg" alt="Alternate Text" />
+            </div>
+            <div>
+                <img src="/Image/phim/haiphuong.jpg" alt="Alternate Text" />
+            </div>
+            <div>
+                <img src="/Image/phim/joker.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/thedarkknight.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/nowyouseeme.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/godfather.jpg" alt="Alternate Text" />
+            </div>
+            <div>
+                <img src="/Image/phim/haiphuong.jpg" alt="Alternate Text" />
+            </div>
+            <div>
+                <img src="/Image/phim/joker.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/thedarkknight.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/nowyouseeme.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/godfather.jpg" alt="Alternate Text" />
+            </div>
+            <div>
+                <img src="/Image/phim/haiphuong.jpg" alt="Alternate Text" />
+            </div>
+            <div>
+                <img src="/Image/phim/joker.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/thedarkknight.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/nowyouseeme.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/godfather.jpg" alt="Alternate Text" />
+            </div>
+            <div>
+                <img src="/Image/phim/haiphuong.jpg" alt="Alternate Text" />
+            </div>
+            <div>
+                <img src="/Image/phim/joker.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/thedarkknight.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/nowyouseeme.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/godfather.jpg" alt="Alternate Text" />
+            </div>
+            <div>
+                <img src="/Image/phim/haiphuong.jpg" alt="Alternate Text" />
+            </div>
+            <div>
+                <img src="/Image/phim/joker.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/thedarkknight.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/nowyouseeme.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/godfather.jpg" alt="Alternate Text" />
+            </div>
+            <div>
+                <img src="/Image/phim/haiphuong.jpg" alt="Alternate Text" />
+            </div>
+            <div>
+                <img src="/Image/phim/joker.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/thedarkknight.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/nowyouseeme.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/godfather.jpg" alt="Alternate Text" />
+            </div>
+            <div>
+                <img src="/Image/phim/haiphuong.jpg" alt="Alternate Text" />
+            </div>
+            <div>
+                <img src="/Image/phim/joker.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/thedarkknight.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/nowyouseeme.jpg" alt="">
+            </div>
+            <div>
+                <img src="/Image/phim/godfather.jpg" alt="Alternate Text" />
+            </div>
+            <div>
+                <img src="/Image/phim/haiphuong.jpg" alt="Alternate Text" />
+            </div>
         </div>
     </div>
 </section>

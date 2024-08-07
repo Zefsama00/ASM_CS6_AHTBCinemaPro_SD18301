@@ -34,26 +34,38 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
                 return NotFound();
             }
 
-            var ngayChieuCuaPhim = await _context.NgayChieus.Include(c => c.Phongs).FirstOrDefaultAsync(c => c.Phim == id);
+            var ngayChieuCuaPhim = await _context.NgayChieus
+                .Include(c => c.Phongs)
+                .FirstOrDefaultAsync(c => c.Phim == id);
 
-            
+            List<GioChieu> cacCaChieuCuaPhim = new List<GioChieu>();
+            List<Ghe> ghelist = new List<Ghe>();
 
-            var cacCaChieuCuaPhim = await _context.GioChieus.Where(c => c.Cachieu == ngayChieuCuaPhim.IdCaChieu).ToListAsync();
+            if (ngayChieuCuaPhim != null)
+            {
+                cacCaChieuCuaPhim = await _context.GioChieus
+                    .Where(c => c.Cachieu == ngayChieuCuaPhim.IdCaChieu)
+                    .ToListAsync();
 
-            var ghelist = await _context.Ghes
-            .Where(g => g.Phong == ngayChieuCuaPhim.Phongs.IdPhong)
-            .ToListAsync();
+                if (ngayChieuCuaPhim.Phongs != null)
+                {
+                    ghelist = await _context.Ghes
+                        .Where(g => g.Phong == ngayChieuCuaPhim.Phongs.IdPhong)
+                        .ToListAsync();
+                }
+            }
 
             var viewModel = new Multimodel
             {
                 Phims = new List<Phim> { phim },
                 Ghes = ghelist,
-                NgayChieus = new List<NgayChieu> { ngayChieuCuaPhim},
+                NgayChieus = ngayChieuCuaPhim != null ? new List<NgayChieu> { ngayChieuCuaPhim } : new List<NgayChieu>(),
                 GioChieus = cacCaChieuCuaPhim
             };
 
             return Ok(viewModel);
         }
+
         [HttpGet]
         [Route("LoadGhe/{id}")]
         public IActionResult LoadGhe(int id)

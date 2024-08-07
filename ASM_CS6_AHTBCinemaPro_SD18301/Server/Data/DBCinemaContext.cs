@@ -1,5 +1,6 @@
 ﻿
 using ASM_CS6_AHTBCinemaPro_SD18301.Models;
+using ASM_CS6_AHTBCinemaPro_SD18301.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace ASM_CS6_AHTBCinemaPro_SD18301.Data
@@ -19,6 +20,8 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Data
         public DbSet<Phim> Phims { get; set; }
         public DbSet<Phong> Phongs { get; set; }
         public DbSet<Ve> Ves { get; set; }
+        public DbSet<DanhMucPhim> DanhMucPhims { get; set; }
+        public DbSet<DanhMuc> DanhMucs { get; set; }
         public DBCinemaContext(DbContextOptions<DBCinemaContext> options) : base(options)
         { 
 
@@ -94,7 +97,14 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Data
            .HasOne(p => p.Users)
            .WithMany(c => c.NhanViens)
            .HasForeignKey(p => p.IDUser);
-
+            modelBuilder.Entity<DanhMucPhim>()
+            .HasOne(p => p.Phim)
+            .WithMany(c => c.DanhMucPhim)
+            .HasForeignKey(p => p.IdPhim);
+            modelBuilder.Entity<DanhMucPhim>()
+            .HasOne(p => p.DanhMuc)
+            .WithMany(c => c.DanhMucPhim)
+            .HasForeignKey(p => p.IdDanhMuc);
         }
     }
 }

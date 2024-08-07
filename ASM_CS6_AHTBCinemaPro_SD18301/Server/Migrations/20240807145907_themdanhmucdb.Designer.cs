@@ -4,14 +4,16 @@ using ASM_CS6_AHTBCinemaPro_SD18301.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Migrations
 {
     [DbContext(typeof(DBCinemaContext))]
-    partial class DBCinemaContextModelSnapshot : ModelSnapshot
+    [Migration("20240807145907_themdanhmucdb")]
+    partial class themdanhmucdb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

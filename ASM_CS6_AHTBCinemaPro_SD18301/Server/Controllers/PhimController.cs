@@ -47,7 +47,12 @@
             var dsphim = await _context.Phims.Select(p => p.TenPhim).ToListAsync();
             return Ok(dsphim);
         }
-
+        [HttpGet("phim")]
+        public async Task<ActionResult<IEnumerable<Phim>>> GetPhims()
+        {
+            var dsphim = await _context.Phims.ToListAsync();
+            return Ok(dsphim);
+        }
         // GET: api/Phim/listphim
         [HttpGet("listphim")]
         public async Task<ActionResult<List<PhimVM>>> GetPhim()

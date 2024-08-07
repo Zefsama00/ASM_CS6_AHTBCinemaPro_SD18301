@@ -19,7 +19,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var response = await Http.GetStringAsync("api/Phim/listphim");
+        var response = await Http.GetStringAsync("api/Phim/phim");
         phims = JsonConvert.DeserializeObject<List<Phim>>(response);
         await JSRuntime.InvokeVoidAsync("initOwlCarousel");
     }

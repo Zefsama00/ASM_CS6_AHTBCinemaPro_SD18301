@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ASM_CS6_AHTBCinemaPro_SD18301.Shared.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -26,5 +27,6 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Models
         public int ThoiLuong { get; set; }
         public string HinhAnh { get; set; }
         public ICollection<NgayChieu> CaChieus { get; set; }
+        public ICollection<DanhMucPhim> DanhMucPhim { get; set; }
     }
 }

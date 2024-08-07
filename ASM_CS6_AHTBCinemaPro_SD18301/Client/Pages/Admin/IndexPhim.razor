@@ -64,7 +64,7 @@
                         <td>
                             @if (!string.IsNullOrEmpty(phim.HinhAnh))
                             {
-                                <img src="Image/@phim.HinhAnh" alt="Hình ảnh phim" style="width: 100px;" />
+                                <img src="Image/phim/@phim.HinhAnh" alt="Hình ảnh phim" style="width: 100px;" />
                             }
                         </td>
                         <td>
@@ -123,7 +123,7 @@
                             <InputFile id="HinhAnh" class="form-control" OnChange="HandleImageUpload" />
                             @if (!string.IsNullOrEmpty(currentPhim.HinhAnh))
                             {
-                                <img src="Image/@currentPhim.HinhAnh" alt="Hình ảnh phim" style="width: 100px;" class="mt-2" />
+                                <img src="Image/phim/@currentPhim.HinhAnh" alt="Hình ảnh phim" style="width: 100px;" class="mt-2" />
                             }
                         </div>
                         <div class="button" style="float:right; padding: 0 0 30px 0">
