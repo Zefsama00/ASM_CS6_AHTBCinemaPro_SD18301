@@ -97,8 +97,8 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
                 var u = _context.Users.FirstOrDefault(x => x.Username == loginModel.Username && x.PassWord == hashedPassword);
                 if (u != null)
                 {
-                    // Return a token or success message
-                    return Ok(new { Token = GenerateJwtToken(u) });
+                    // Return a token and UserId
+                    return Ok(new { Token = GenerateJwtToken(u), UserId = u.IdUser });
                 }
                 else
                 {
@@ -113,12 +113,13 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
         private string GenerateJwtToken(User user)
         {
             var claims = new List<Claim>
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Username),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Role, user.Role)
-            };
+    {
+        new Claim(JwtRegisteredClaimNames.Sub, user.Username),
+        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+        new Claim(ClaimTypes.Name, user.Username),
+        new Claim(ClaimTypes.Role, user.Role),
+        new Claim(ClaimTypes.NameIdentifier, user.IdUser) // Add UserId here
+    };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -133,5 +134,6 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
     }
 }

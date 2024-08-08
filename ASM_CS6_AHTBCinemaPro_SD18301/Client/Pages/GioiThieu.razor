@@ -8,7 +8,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Bootstrap Example</title>
+    <title>About Us - Anh Hùng Tranh Bá Cinema</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
@@ -16,61 +16,107 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <style>
-        .carousel-inner img {
-            width: 100%; /* Set width to 100% */
-            margin: auto;
-            min-height: 200px;
+        body {
+            font-size: 18px; /* Tăng kích thước font chung */
         }
 
-        .carousel-caption {
-            position: absolute;
-            top: 20px;
-            left: 0;
-            right: 0;
-            color: #fff;
-            text-align: center;
+        h1, h2, h3, h4 {
+            font-size: 20px; /* Tăng kích thước font cho các tiêu đề */
         }
 
-        .carousel-bot {
-            position: absolute;
-            top: 300px;
-            left: 0;
-            right: 0;
+        .founder-img, .vision-img {
             width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .text-section {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        p {
+            font-size: 18px;
+        }
+
+        h2 {
+            color: red;
+            font-weight: bold;
         }
     </style>
 </head>
-<body>
-    <div id="myCarousel" class="carousel slide" data-ride="carousel">
-        <div class="carousel-inner" role="listbox">
-            <div class="item active">
-                <img src="/Image/background/gioithieu1.jpg" alt="Image">
-                <div class="carousel-caption">
-                    <h3>Rạp phim đỉnh nhất Việt Nam</h3>
-                    <p>Anh Hùng Tranh Bá Cinema</p>
-                </div>
+<body class="bg-dark text-light">
+
+    <!-- About Us Content -->
+    <div class="container text-center mt-5">
+        <h1 class="text-danger">Anh Hùng Tranh Bá Cinema</h1>
+        <p class="lead">Chào mừng bạn đến với rạp phim đỉnh nhất Việt Nam, nơi mang đến cho bạn những trải nghiệm điện ảnh tuyệt vời nhất!</p>
+        <br>
+
+        <!-- Who We Are -->
+        <div class="row">
+            <div class="col-md-6 text-section">
+                <img src="/Image/background/hinh-anh-giang-ho-hong-kong-dep.jpg" class="founder-img" alt="Founders Image">
+                <h3 class="text-danger mt-3">6 thành viên sáng lập</h3>
+                <p>Chúng tôi là sáu người bạn đam mê điện ảnh và mong muốn mang đến những bộ phim hành động, siêu anh hùng mạo hiểm đỉnh cao nhất.</p>
+            </div>
+
+            <!-- Our Vision -->
+            <div class="col-md-6 text-section">
+                <img src="/Image/background/5anhdeptrai.jpg" class="vision-img" alt="Team Image">
+                <h3 class="text-danger mt-3">Tầm nhìn của chúng tôi</h3>
+                <p>Rạp phim "Anh Hùng Tranh Bá" không chỉ là nơi xem phim mà còn là nơi mang đến những trải nghiệm điện ảnh đầy kịch tính và hấp dẫn.</p>
+            </div>
+        </div>
+
+        <!-- Team Section -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <h2 class="text-danger">Gặp gỡ đội ngũ của chúng tôi</h2>
+            </div>
+            <div class="col-md-2 text-center">
+                <h4>Anh Duy</h4>
+                <p>Dev</p>
+            </div>
+            <div class="col-md-2 text-center">
+                <h4>Nguyễn Nguyễn</h4>
+                <p>Dev</p>
+            </div>
+            <div class="col-md-2 text-center">
+                <h4>Thành Khang</h4>
+                <p>Dev</p>
+            </div>
+            <div class="col-md-2 text-center">
+                <h4>Chí Cường</h4>
+                <p>Dev</p>
+            </div>
+            <div class="col-md-2 text-center">
+                <h4>Ngọc Mẫn</h4>
+                <p>Dev</p>
+            </div>
+            <div class="col-md-2 text-center">
+                <h4>Tuấn Kiệt</h4>
+                <p>Dev</p>
+            </div>
+        </div>
+
+        <!-- History Section -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <h2 class="text-danger">Lịch sử của chúng tôi</h2>
+                <p>Rạp phim "Anh Hùng Tranh Bá" được thành lập vào năm 2024 với mục tiêu mang đến những trải nghiệm điện ảnh tốt nhất cho khán giả. Chúng tôi đã phát triển từ một rạp phim nhỏ trở thành một chuỗi rạp nổi tiếng với chất lượng dịch vụ và sự sáng tạo không ngừng nghỉ.</p>
+            </div>
+        </div>
+
+        <!-- Footer Section -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <p class="text-muted" style="color: #ff6347;">&copy; 2024 Anh Hùng Tranh Bá Cinema. All rights reserved.</p>
             </div>
         </div>
     </div>
 
-    <div class="container carousel-bot text-center">
-        <h3>Anh Hùng Tranh Bá Cinema</h3><br>
-        <div class="row">
-            <div class="col-sm-4">
-                <img src="/Image/background/hinh-anh-giang-ho-hong-kong-dep.jpg" class="img-responsive" style="width:100%" alt="Image">
-                <p>5 thành viên sáng lập</p>
-            </div>
-            <div class="col-sm-4">
-                <img src="/Image/background/5anhdeptrai.jpg" class="img-responsive" style="width:100%" alt="Image">
-                <p>Tiêu Anh Duy, Nguyễn Nguyễn, Phan Vũ Thành Khang, Lương Chí Cường, Nguyễn Ngọc Mẫn</p>
-            </div>
-            <div class="col-sm-4">
-                <div class="well text-black-50">
-                    <p>Rạp phim "Anh Hùng Tranh Bá" là điểm đến tuyệt vời cho những người yêu thích các bộ phim hành động, siêu anh hùng mạo hiểm. Sự kết hợp giữa câu chuyện ly kỳ, hiệu ứng đặc sắc và diễn xuất tuyệt vời hứa hẹn mang đến cho khán giả những trải nghiệm đầy kịch tính và hấp dẫn.</p>
-                </div>
-            </div>
-        </div>
-    </div>
     <br>
 </body>
 </html>

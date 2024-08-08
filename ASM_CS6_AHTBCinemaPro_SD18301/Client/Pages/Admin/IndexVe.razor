@@ -1,0 +1,249 @@
+﻿@page "/ve"
+@using ASM_CS6_AHTBCinemaPro_SD18301.Models
+@using Newtonsoft.Json
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+@using Microsoft.AspNetCore.Components.Forms
+@layout _LayoutAdmin
+@using ASM_CS6_AHTBCinemaPro_SD18301.Client.Pages.Admin.SharedAdmin
+<h3>Danh sách vé</h3>
+<div class="row mb-3">
+    <div class="col-md-6 text-end">
+        <button class="btn btn-success" @onclick="ShowAddModal">Thêm vé mới</button>
+    </div>
+</div>
+@if (!string.IsNullOrEmpty(AlertMessage))
+{
+    <div class="alert alert-@AlertType alert-dismissible fade show" role="alert">
+        @AlertMessage
+        <a type="button" aria-label="Close" @onclick="() => AlertMessage = null">
+            <i class="fa fa-times" style="margin-left: 5px" aria-hidden="true"></i>
+        </a>
+    </div>
+}
+
+<div class="container">
+    @if (ves == null)
+    {
+        <p><em>Đang tải...</em></p>
+    }
+    else if (ves.Count == 0)
+    {
+        <p>Không có vé nào có sẵn.</p>
+    }
+    else
+    {
+
+
+        <table class="table table-striped table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Tên vé</th>
+                    <th>Giá vé</th>
+                    <th>Số suất chiếu</th>
+                    <th>Số ghế</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var ve in ves)
+                {
+                    <tr>
+                        <td>@ve.TenVe</td>
+                        <td>@ve.GiaVe</td>
+                        <td>@ve.SuatChieu</td>
+                        <td>@ve.Ghe</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm" @onclick="() => EditVe(ve)">Sửa</button>
+                           @*  <button class="btn btn-danger btn-sm" @onclick="() => DeleteVe(ve.IdVe)">Xóa</button> *@
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+<!-- Modal for Add/Edit -->
+<!-- Modal for Add/Edit -->
+@if (IsModalVisible)
+{
+    <div class="modal show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content" style="background-color: #f8f9fa; color: #343a40;">
+                <div class="modal-header" style="background-color: #e9ecef;">
+                    <h5 class="modal-title">@((isEditing ? "Sửa vé" : "Thêm vé mới"))</h5>
+                    <button type="button" class="btn-close" aria-label="Đóng" @onclick="CloseModal" style="background-color: transparent; border: none; color: #343a40;">×</button>
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="@currentVe" OnValidSubmit="HandleValidSubmit">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+
+                        @if (isEditing)
+                        {
+                            <div class="mb-3">
+                                <label for="TenVe" class="form-label">Tên vé</label>
+                                <InputText id="TenVe" class="form-control" @bind-Value="currentVe.TenVe" readonly />
+                            </div>
+                        }
+                        <div class="mb-3">
+                            <label for="GiaVe" class="form-label">Giá vé</label>
+                            <InputNumber id="GiaVe" class="form-control" @bind-Value="currentVe.GiaVe" />
+                        </div>
+                        @if (isEditing)
+                        {
+                            <div class="mb-3">
+                                <label for="SuatChieu" class="form-label">Suất chiếu</label>
+                                <InputNumber id="SuatChieu" class="form-control" @bind-Value="currentVe.SuatChieu" readonly />
+                            </div>
+                        }
+                        @if (isEditing)
+                        {
+                            <div class="mb-3">
+                                <label for="Ghe" class="form-label">Số ghế</label>
+                                <InputText id="Ghe" class="form-control" @bind-Value="currentVe.Ghe" readonly />
+                            </div>
+                        }
+                        <button type="submit" class="btn btn-primary">@((isEditing ? "Lưu thay đổi" : "Thêm vé"))</button>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@code {
+    private List<Ve> ves;
+    private Ve currentVe = new Ve();
+    private bool isEditing = false;
+    private bool IsModalVisible = false;
+    private string AlertMessage;
+    private string AlertType;
+    private string GioChieuInfo = string.Empty;
+    private string GheInfo = string.Empty;
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadVes();
+    }
+
+    private async Task LoadVes()
+    {
+        try
+        {
+            var response = await Http.GetStringAsync("api/Ves");
+            ves = JsonConvert.DeserializeObject<List<Ve>>(response);
+        }
+        catch (Exception ex)
+        {
+            SetAlert("Có lỗi xảy ra khi tải danh sách vé: " + ex.Message, "danger");
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        HttpResponseMessage response;
+
+        try
+        {
+            if (isEditing)
+            {
+                response = await Http.PutAsJsonAsync($"api/Ves/{currentVe.IdVe}", currentVe);
+                if (response.IsSuccessStatusCode)
+                {
+                    await LoadVes();
+                    currentVe = new Ve();
+                    isEditing = false;
+                    CloseModal();
+                    SetAlert("Vé đã được cập nhật thành công!", "success");
+                }
+                else
+                {
+                    var errorMessage = await response.Content.ReadAsStringAsync();
+                    SetAlert($"Có lỗi xảy ra khi cập nhật vé: {errorMessage}", "danger");
+                }
+            }
+            else
+            {
+                response = await Http.PostAsJsonAsync("api/Ves", currentVe);
+                if (response.IsSuccessStatusCode)
+                {
+                    await LoadVes();
+                    currentVe = new Ve();
+                    isEditing = false;
+                    CloseModal();
+                    SetAlert("Vé đã được thêm thành công!", "success");
+                }
+                else
+                {
+                    var errorMessage = await response.Content.ReadAsStringAsync();
+                    SetAlert($"Có lỗi xảy ra khi thêm vé: {errorMessage}", "danger");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            SetAlert("Có lỗi xảy ra: " + ex.Message, "danger");
+        }
+    }
+
+    private void ShowAddModal()
+    {
+        currentVe = new Ve();
+        isEditing = false;
+        ShowModal();
+    }
+
+    private void EditVe(Ve ve)
+    {
+        currentVe = ve;
+        isEditing = true;
+        ShowModal();
+    }
+
+    private async Task DeleteVe(int id)
+    {
+        try
+        {
+            var response = await Http.DeleteAsync($"api/Ves/{id}");
+            if (response.IsSuccessStatusCode)
+            {
+                await LoadVes();
+                SetAlert("Vé đã được xóa thành công!", "success");
+            }
+            else
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                SetAlert($"Có lỗi xảy ra khi xóa vé: {errorMessage}", "danger");
+            }
+        }
+        catch (Exception ex)
+        {
+            SetAlert("Có lỗi xảy ra: " + ex.Message, "danger");
+        }
+    }
+
+    private void ShowModal()
+    {
+        IsModalVisible = true;
+    }
+
+    private void CloseModal()
+    {
+        IsModalVisible = false;
+    }
+
+    private void SetAlert(string message, string alertType)
+    {
+        AlertMessage = message;
+        AlertType = alertType;
+        StateHasChanged();
+        _ = Task.Delay(3000).ContinueWith(t =>
+        {
+            AlertMessage = null;
+            InvokeAsync(StateHasChanged);
+        });
+    }
+}

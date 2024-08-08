@@ -1,0 +1,388 @@
+﻿@page "/QLGhe"
+@using ASM_CS6_AHTBCinemaPro_SD18301.Models
+@using ASM_CS6_AHTBCinemaPro_SD18301.Shared.Models
+@using ASM_CS6_AHTBCinemaPro_SD18301.Shared.ViewModels
+@using Newtonsoft.Json
+@inject HttpClient Http
+@inject IJSRuntime JS
+@inject NavigationManager Navigation
+@using ASM_CS6_AHTBCinemaPro_SD18301.Client.Pages.Admin.SharedAdmin
+@layout _LayoutAdmin
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+@code {
+    private List<GheVM> ghes;
+    private List<Phong> phongs;
+    private List<LoaiGhe> loaighes;
+    private List<GioChieuViewModel> gioChieus;
+
+    private string Loaighedachon;
+    private BulkCreateGheViewModel newGhe = new BulkCreateGheViewModel();
+    private GheVM updateGhe = new GheVM();
+
+    private string notificationMessage;
+    private string notificationType; // "success" or "error"
+    private bool showAlert;
+    private bool isEditMode = false; // Thêm biến để kiểm tra chế độ chỉnh sửa
+    private string editingGheId; // ID của ghế đang được chỉnh sửa
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        try
+        {
+            var response = await Http.GetStringAsync("api/Ghes");
+            ghes = JsonConvert.DeserializeObject<List<GheVM>>(response);
+
+            var phongresponse = await Http.GetStringAsync("api/Phong");
+            phongs = JsonConvert.DeserializeObject<List<Phong>>(phongresponse);
+
+            var loaiGheresponse = await Http.GetStringAsync("api/LoaiGhes");
+            loaighes = JsonConvert.DeserializeObject<List<LoaiGhe>>(loaiGheresponse);
+
+            var gioChieuresponse = await Http.GetStringAsync("api/giochieu");
+            gioChieus = JsonConvert.DeserializeObject<List<GioChieuViewModel>>(gioChieuresponse);
+        }
+        catch (Exception ex)
+        {
+            notificationMessage = "Lỗi tải dữ liệu.";
+            notificationType = "error";
+            showAlert = true;
+        }
+    }
+
+    private async Task OpenAddModal()
+    {
+        isEditMode = false;
+        newGhe = new BulkCreateGheViewModel(); // Khởi tạo đối tượng mới cho thêm ghế
+
+        await JS.InvokeVoidAsync("showAddModal");
+    }
+
+    private async Task OpenEditModal(GheVM item)
+    {
+        Loaighedachon = item.LoaiGhe;
+        isEditMode = true;
+        updateGhe = new GheVM
+            {
+                IdGhe = item.IdGhe,
+                TenGhe = item.TenGhe,
+                Phong = item.Phong,
+                TrangThai = item.TrangThai,
+                LoaiGhe = item.LoaiGhe
+            };
+
+        editingGheId = item.IdGhe;
+
+        await JS.InvokeVoidAsync("showEditModal");
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        HttpResponseMessage response = null;
+        try
+        {
+            if (isEditMode)
+            {
+                response = await Http.PutAsJsonAsync($"api/Ghes/{editingGheId}", updateGhe);
+            }
+            else
+            {
+                response = await Http.PostAsJsonAsync("api/Ghes", newGhe);
+            }
+
+            if (response.IsSuccessStatusCode)
+            {
+                notificationMessage = isEditMode ? "Cập nhật ghế thành công!" : "Lưu ghế thành công!";
+                notificationType = "success";
+                showAlert = true;
+
+                isEditMode = false;
+                await JS.InvokeVoidAsync("hideModal", isEditMode ? "#editModal" : "#addModal");
+
+                await RefreshData();
+                await JS.InvokeVoidAsync("handleAlertAndReload");
+            }
+            else
+            {
+                var errorResponse = await response.Content.ReadAsStringAsync();
+                notificationMessage = isEditMode ? "Cập nhật ghế thất bại." : "Lưu ghế thất bại.";
+                notificationType = "error";
+                showAlert = true;
+
+                await JS.InvokeVoidAsync("hideModal", isEditMode ? "#editModal" : "#addModal");
+                await JS.InvokeVoidAsync("handleAlertAndReload");
+            }
+        }
+        catch (Exception ex)
+        {
+            notificationMessage = isEditMode ? "Cập nhật thất bại" : "Lưu thất bại";
+            notificationType = "error";
+            showAlert = true;
+
+            await JS.InvokeVoidAsync("hideModal", isEditMode ? "#editModal" : "#addModal");
+            await JS.InvokeVoidAsync("handleAlertAndReload");
+        }
+    }
+
+    private async Task RefreshData()
+    {
+        await LoadData();
+        StateHasChanged();
+    }
+
+    private string GetAlertClass(string alertType)
+    {
+        return alertType == "success" ? "alert-success" : "alert-danger";
+    }
+
+    [JSInvokable]
+    public async Task SetShowAlert(bool show)
+    {
+        showAlert = show;
+        if (!show)
+        {
+            notificationMessage = string.Empty;
+            notificationType = string.Empty;
+        }
+        await InvokeAsync(StateHasChanged);
+    }
+}
+
+<h1>Danh sách ghế</h1>
+<button class="btn btn-primary" @onclick="OpenAddModal">
+    <i class="fas fa-plus"></i> Thêm Ghế Mới
+</button>
+
+@if (showAlert)
+{
+    <div id="notificationAlert" class="alert @GetAlertClass(notificationType) alert-dismissible fade show" role="alert">
+        @notificationMessage
+        <button type="button" class="btn-close" aria-label="Close" @onclick="() => SetShowAlert(false)"></button>
+    </div>
+}
+
+@if (ghes == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table class="table text-white">
+        <thead>
+            <tr>
+                <th><i class="fas fa-chair"></i> Tên Ghế</th>
+                <th><i class="fas fa-calendar-alt"></i> Phòng</th>
+                <th><i class="fas fa-info-circle"></i> Trạng Thái</th>
+                <th><i class="fas fa-cogs"></i> Loại Ghế</th>
+                <th><i class="fas fa-cogs"></i> Hành Động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in ghes)
+            {
+                <tr>
+                    <td>@item.TenGhe</td>
+                    <td>@item.Phong</td>
+                    <td>@item.TrangThai</td>
+                    <td>@item.LoaiGhe</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="() => OpenEditModal(item)">
+                            <i class="fas fa-edit"></i> Cập nhật
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<!-- Modal cho thêm ghế -->
+<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addModalLabel">
+                    <i class="fas fa-plus"></i> Thêm Ghế Mới
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <EditForm Model="newGhe" OnValidSubmit="HandleValidSubmit">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <div class="form-group">
+                        <label for="sGhe">Số Ghế:</label>
+                        <InputNumber id="sGhe" class="form-control" @bind-Value="newGhe.SoLuongGhe" />
+                        <ValidationMessage For="@(() => newGhe.SoLuongGhe)" />
+                    </div>
+                    <div class="form-group">
+                        <label for="tGhe">Tên Ghế:</label>
+                        <InputText id="tGhe" class="form-control" @bind-Value="newGhe.StartingSeatLetter" />
+                        <ValidationMessage For="@(() => newGhe.StartingSeatLetter)" />
+                    </div>
+                    <div class="form-group">
+                        <label for="phong">Phòng:</label>
+                        <InputSelect id="phong" class="form-control" @bind-Value="newGhe.Phong">
+                            <option value="">Chọn phòng</option>
+                            @if (phongs == null)
+                            {
+                                <p><em>Loading.....</em></p>
+                            }
+                            else
+                            {
+                                @foreach (var phong in phongs)
+                                {
+                                    <option value="@phong.IdPhong">@phong.SoPhong</option>
+                                }
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => newGhe.Phong)" />
+                    </div>
+                    <div class="form-group">
+                        <label for="loaiGhe">Loại Ghế:</label>
+                        <InputSelect id="loaiGhe" class="form-control" @bind-Value="newGhe.LoaiGhe">
+                            <option value="">Chọn loại ghế</option>
+                            @if (loaighes == null)
+                            {
+                                <p><em>Loading.....</em></p>
+                            }
+                            else
+                            {
+                                @foreach (var loaiGhe in loaighes)
+                                {
+                                    <option value="@loaiGhe.IdLoaiGhe">@loaiGhe.TenLoaiGhe</option>
+                                }
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => newGhe.LoaiGhe)" />
+                    </div>
+                    <div class="form-group">
+                        <label for="gVe">Giá Vé:</label>
+                        <InputNumber id="gVe" class="form-control" @bind-Value="newGhe.GiaVe" />
+                        <ValidationMessage For="@(() => newGhe.GiaVe)" />
+                    </div>
+                    <div class="form-group">
+                        <label for="trangThai">Trạng Thái:</label>
+                        <InputSelect id="trangThai" class="form-control" @bind-Value="newGhe.TrangThai">
+                            <option value="">Chọn trạng thái</option>
+                            <option value="Trống">Trống</option>
+                            <option value="Đã đặt">Đã đặt</option>
+                        </InputSelect>
+                        <ValidationMessage For="@(() => newGhe.TrangThai)" />
+                    </div>
+                    <div class="form-group">
+                        <label for="sChieu">Suất Chiếu:</label>
+                        <InputSelect id="sChieu" class="form-control" @bind-Value="newGhe.GioChieuId">
+                            <option value="">Chọn suất chiếu</option>
+                            @if (gioChieus == null)
+                            {
+                                <p><em>Loading.....</em></p>
+                            }
+                            else
+                            {
+                                @foreach (var gioChieu in gioChieus)
+                                {
+                                    <option value="@gioChieu.IdGioChieu">@gioChieu.Cachieu</option>
+                                }
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => newGhe.GioChieuId)" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Thêm
+                    </button>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal cho cập nhật ghế -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">
+                    <i class="fas fa-edit"></i> Cập Nhật Ghế
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <EditForm Model="updateGhe" OnValidSubmit="HandleValidSubmit">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <div class="form-group">
+                        <label for="tenGheEdit">Tên Ghế:</label>
+                        <InputText id="tenGheEdit" class="form-control" @bind-Value="updateGhe.TenGhe" />
+                        <ValidationMessage For="@(() => updateGhe.TenGhe)" />
+                    </div>
+                    <div class="form-group">
+                        <label for="phongEdit">Phòng:</label>
+                        <InputText disabled id="phongEdit" class="form-control" @bind-Value="updateGhe.Phong" />
+                        <ValidationMessage For="@(() => updateGhe.Phong)" />
+                    </div>
+                    <div class="form-group">
+                        <label for="loaiGheEdit">Loại Ghế:</label>
+                        <InputSelect id="loaiGhe" class="form-control" @bind-Value="updateGhe.LoaiGhe">
+                            <option value="@Loaighedachon">@Loaighedachon</option>
+                            @if (loaighes == null)
+                            {
+                                <p><em>Loading.....</em></p>
+                            }
+                            else
+                            {
+                                @foreach (var loaiGhe in loaighes)
+                                {
+                                    <option value="@loaiGhe.IdLoaiGhe">@loaiGhe.TenLoaiGhe</option>
+                                }
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => updateGhe.LoaiGhe)" />
+                    </div>
+                    <div class="form-group">
+                        <label for="trangThaiEdit">Trạng Thái:</label>
+                        <InputSelect id="trangThaiEdit" class="form-control" @bind-Value="updateGhe.TrangThai">
+                            <option value="">Chọn trạng thái</option>
+                            <option value="Trống">Trống</option>
+                            <option value="Đã đặt">Đã đặt</option>
+                        </InputSelect>
+                        <ValidationMessage For="@(() => updateGhe.TrangThai)" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-edit"></i> Cập Nhật
+                    </button>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script>
+    window.showAddModal = function () {
+        var modal = new bootstrap.Modal(document.getElementById('addModal'));
+        modal.show();
+    }
+
+    window.showEditModal = function () {
+        var modal = new bootstrap.Modal(document.getElementById('editModal'));
+        modal.show();
+    }
+
+    window.hideModal = function (selector) {
+        var modal = bootstrap.Modal.getInstance(document.getElementById(selector.substring(1)));
+        if (modal) {
+            modal.hide();
+        }
+    }
+
+    window.handleAlertAndReload = function () {
+        location.reload();
+    }
+</script>

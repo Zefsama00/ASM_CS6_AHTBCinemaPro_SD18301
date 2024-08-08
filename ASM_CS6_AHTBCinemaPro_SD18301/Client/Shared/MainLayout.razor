@@ -1,6 +1,10 @@
-﻿@inherits LayoutComponentBase
+﻿@using ASM_CS6_AHTBCinemaPro_SD18301.Models
+@using Newtonsoft.Json
+@using static System.Net.WebRequestMethods
+@inherits LayoutComponentBase
 @inject IJSRuntime JSRuntime
 @inject NavigationManager Navigation
+@inject HttpClient Http
 <link rel="stylesheet" href="/css/index.css">
 <link href="css/style.css" rel="stylesheet" />
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
@@ -10,6 +14,39 @@
 <head>
     <link rel="stylesheet" href="/css/navbar.css">
 </head>
+<style>
+    .dropdown-container {
+        position: relative;
+        display: inline-block;
+        z-index: 1000; /* Đảm bảo dropdown luôn ở trên cùng */
+    }
+
+    .dropdown-options {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1001; /* Đảm bảo các tùy chọn của dropdown luôn ở trên cùng */
+    }
+
+        .dropdown-options a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+            .dropdown-options a:hover {
+                background-color: #f1f1f1;
+            }
+
+    .dropdown-container.show .dropdown-options {
+        display: block;
+    }
+
+</style>
+
 <header>
     <div class="logo">
         <p>AHTB</p>
@@ -24,13 +61,21 @@
     </nav>
     @if (isLoggedIn)
     {
-        <button @onclick="HandleLogout">Đăng xuất</button>
+        <div class="dropdown-container @(dropdownOpen ? "show" : "")">
+            <button class="dropdown-toggle" @onclick="ToggleDropdown">Chào, @name</button>
+            <div class="dropdown-options">
+                <a href="#" @onclick="HandleLogout">Đăng xuất</a>
+                <a href="/doi-mat-khau">Đổi mật khẩu</a>
+                <a href="/cap-nhat-thong-tin">Cập nhật thông tin</a>
+            </div>
+        </div>
     }
     else
     {
-        <button> <a href="login">Đăng nhập</a> </button>
+        <button><a href="login">Đăng nhập</a></button>
     }
 </header>
+
 
 <div class="main">
     <div class="content px-4">
@@ -43,10 +88,10 @@
             <div class="col-4 col-md-6 col-sm-12">
                 <div class="content">
                     <a href="#" class="logo">
-                        <i class='bx bx-movie-play bx-tada main-color'></i>Fl<span class="main-color">i</span>x
+                        <i class='bx bx-movie-play bx-tada main-color'></i>AH<span class="main-color">T</span>B
                     </a>
                     <p>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut veniam ex quos hic id nobis beatae earum sapiente! Quod ipsa exercitationem officiis non error illum minima iusto et. Dolores, quibusdam?
+                        Website rạp phim AHTB là một website hiện đại và mới mẻ. Phù hợp với thị trường hiện nay, có nhiều chức năng quản lý và đặt vé một cách tối ưu nhất. Đảm bảo đem lại sự hài lòng cho khách hàng
                     </p>
                     <div class="social-list">
                         <a href="#" class="social-item">
@@ -65,7 +110,7 @@
                 <div class="row">
                     <div class="col-3 col-md-6 col-sm-6">
                         <div class="content">
-                            <p><b>Flix</b></p>
+                            <p><b>AHTB</b></p>
                             <ul class="footer-menu">
                                 <li><a href="#">About us</a></li>
                                 <li><a href="#">My profile</a></li>
@@ -105,14 +150,36 @@
         </div>
     </div>
 </footer>
-
+<script>
+    document.addEventListener('click', function (event) {
+        var dropdown = document.querySelector('.dropdown-container');
+        if (dropdown && !dropdown.contains(event.target)) {
+            Blazor.invokeMethodAsync('CloseDropdown');
+        }
+    });
+</script>
 
 @code {
+    private KhachHang kh;
     private bool isLoggedIn = false;
+    private string userId = string.Empty;
+    public string name = string.Empty;
+    private bool dropdownOpen = false;
 
     protected override async Task OnInitializedAsync()
     {
         await CheckLoginStatus();
+        await LoadUserId();
+
+        if (!string.IsNullOrEmpty(userId))
+        {
+            var response = await Http.GetStringAsync($"api/KhachHang/{userId}");
+            kh = JsonConvert.DeserializeObject<KhachHang>(response);
+            if (kh != null)
+            {
+                name = kh.TenKH; // Assuming TenKh is the property for the name
+            }
+        }
     }
 
     private async Task CheckLoginStatus()
@@ -122,10 +189,29 @@
         StateHasChanged();
     }
 
+    private async Task LoadUserId()
+    {
+        userId = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "userId");
+    }
+
+    [JSInvokable]
+    public void CloseDropdown()
+    {
+        dropdownOpen = false;
+        StateHasChanged();
+    }
+
+    private void ToggleDropdown()
+    {
+        dropdownOpen = !dropdownOpen;
+    }
+
     private async Task HandleLogout()
     {
         await JSRuntime.InvokeVoidAsync("localStorage.removeItem", "authToken");
+        await JSRuntime.InvokeVoidAsync("localStorage.removeItem", "userId");
         isLoggedIn = false;
+        dropdownOpen = false;
         StateHasChanged();
         Navigation.NavigateTo("/login", true);
     }

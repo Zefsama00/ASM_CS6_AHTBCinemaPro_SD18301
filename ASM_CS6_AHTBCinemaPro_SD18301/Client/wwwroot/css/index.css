@@ -352,7 +352,9 @@ button > span {
     visibility: visible;
     opacity: 1;
 }
-
+owl-item {
+    width: 280px;
+}
 .movie-item {
     display: block;
     position: relative;

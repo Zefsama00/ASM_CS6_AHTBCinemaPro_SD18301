@@ -103,9 +103,12 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Client.Pages
 
                     var username = userClaims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
                     var role = userClaims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+                    var userId = userClaims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
                     if (username != null && role != null)
                     {
+                        // Store UserId in localStorage or state management
+                        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "userId", userId);
                         AuthenticationStateProvider.MarkUserAsAuthenticated(username, role);
 
                         await JSRuntime.InvokeVoidAsync("localStorage.setItem", "authToken", result.Token);
@@ -134,6 +137,7 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Client.Pages
                 ShowMessage();
             }
         }
+
 
         private async Task HandleLogout()
         {
