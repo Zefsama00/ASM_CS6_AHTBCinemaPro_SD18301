@@ -7,7 +7,7 @@
 @using Newtonsoft.Json
 @using Newtonsoft.Json.Serialization
 
-@page "/thanhtoan/{SeatId}/{IdPhim}/{IdCaChieu:int}/{IdGioChieu:int}/{TotalPrice:int}"
+@page "/thanhtoan"
 @{
 }
 <style>
@@ -177,28 +177,18 @@
         background-color: #ccc;
         cursor: not-allowed;
     }
+
+    span {
+        color: black;
+        font-size: medium;
+    }
 </style>
 <body>
     <div class="container">
         <div class="row">
-            <div class="col-lg-4 mb-lg-0 mb-3">
-                <div class="card p-3">
-                    <img src="/Image/qrthanhtoan.jpg" alt="">
-                </div>
-            </div>
-            <div class="col-lg-4 mb-lg-0 mb-3">
-                <div class="card p-3">
-                    <img src="/Image/qrthanhtoan2.jpg" alt="">
-                </div>
-            </div>
-            <div class="col-lg-4 mb-lg-0 mb-3">
-                <div class="card p-3">
-                    <img src="/Image/qrthanhtoan3.jpg" alt="">
-                </div>
-            </div>
             <div class="col-12 mt-4">
                 <div class="card p-3">
-                    <p class="mb-0 fw-bold h4">Thông tin thanh toán</p>
+                    <p style="color: black" class="mb-0 fw-bold h4">Thông tin thanh toán</p>
                 </div>
             </div>
             <div class="col-12">
@@ -317,6 +307,16 @@
 
     protected override async Task OnInitializedAsync()
     {
+        // Phân tích chuỗi truy vấn
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+
+        SeatId = query["seatId"];
+        IdPhim = query["idPhim"];
+        IdCaChieu = int.Parse(query["idCaChieu"]);
+        IdGioChieu = int.Parse(query["idGioChieu"]);
+        TotalPrice = int.Parse(query["totalPrice"]);
+
         isLoading = true; // Bắt đầu quá trình tải dữ liệu
 
         try
@@ -366,12 +366,4 @@
             await JS.InvokeVoidAsync("initializeCheckout", TotalPrice);
         }
     }
-    // private void TogglePayPalButtonVisibility()
-    // {
-
-    //     Console.WriteLine("Showing PayPal button");
-    //     JS.InvokeVoidAsync("showPayPalButton");
-    //     Console.WriteLine("Hiding PayPal button");
-    //     JS.InvokeVoidAsync("hidePayPalButton");
-    // }
 }

@@ -1,0 +1,60 @@
+﻿@page "/danhsachhoadon"
+@using ASM_CS6_AHTBCinemaPro_SD18301.Models
+@using Newtonsoft.Json
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+
+<h3>Danh saách hóa đơn</h3>
+
+<div class="container">
+    @if (bills == null)
+    {
+        <p><em>Đang tải...</em></p>
+    }
+    else if (bills.Count == 0)
+    {
+        <p>Không có hóa đơn nào.</p>
+    }
+    else
+    {
+        <table class="table table-striped table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Nhân viên</th>
+                    <th>Trạng thái</th>
+                    <th>Khuyến mãi</th>
+                    <th>Khách hàng</th>
+                    <th>Tổng tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var hd in bills)
+                {
+                    <tr>
+                        <td>@hd.NhanVien</td>
+                        <td>@hd.TrangThai</td>
+                        <td>@hd.KhuyenMai</td>
+                        <td>@hd.KhachHang</td>
+                        <td>@hd.TongTien</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+@code {
+    private List<HoaDonVM> bills; // Đổi thành HoaDonVM
+
+    protected override async Task OnInitializedAsync() // Sử dụng OnInitializedAsync để tải dữ liệu khi trang khởi tạo
+    {
+        await LoadHoaDon();
+    }
+
+    private async Task LoadHoaDon()
+    {
+        var response = await Http.GetStringAsync("api/HoaDon/dshoadon");
+        bills = JsonConvert.DeserializeObject<List<HoaDonVM>>(response);
+    }
+}

@@ -100,14 +100,6 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
 
             var ve = _context.Ves.FirstOrDefault(x => x.Ghe == id);
 
-            // Cập nhật trạng thái ghế thành "đã có người đặt"
-            var ghe = await _context.Ghes.FirstOrDefaultAsync(g => g.IdGhe == id);
-            if (ghe != null)
-            {
-                ghe.TrangThai = "Đã có người đặt";
-                _context.Ghes.Update(ghe);
-                await _context.SaveChangesAsync();
-            }
 
             // Chuẩn bị ViewModel để gửi tới view
             var viewModel = new Multimodel
