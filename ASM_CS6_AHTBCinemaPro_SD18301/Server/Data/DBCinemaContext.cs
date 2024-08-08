@@ -42,6 +42,8 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Data
             modelBuilder.Entity<Phong>().HasKey(c => c.IdPhong);
             modelBuilder.Entity<Ve>().HasKey(p => p.IdVe);
             modelBuilder.Entity<KhuyenMai>().HasKey(p => p.IdKM);
+            modelBuilder.Entity<DanhMuc>().HasKey(p => p.IdDanhMuc);
+            modelBuilder.Entity<DanhMucPhim>().HasKey(p => p.IDDanhMucPhim);
             modelBuilder.Entity<Ghe>()
                 .HasOne(p => p.Phongs)
                 .WithMany(c => c.Ghes)

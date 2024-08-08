@@ -3,10 +3,23 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Migrations
 {
-    public partial class data : Migration
+    public partial class dbmoi : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "DanhMucs",
+                columns: table => new
+                {
+                    IdDanhMuc = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TenDanhMuc = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DanhMucs", x => x.IdDanhMuc);
+                });
+
             migrationBuilder.CreateTable(
                 name: "KhuyenMais",
                 columns: table => new
@@ -173,6 +186,32 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "DanhMucPhims",
+                columns: table => new
+                {
+                    IDDanhMucPhim = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IdPhim = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    IdDanhMuc = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DanhMucPhims", x => x.IDDanhMucPhim);
+                    table.ForeignKey(
+                        name: "FK_DanhMucPhims_DanhMucs_IdDanhMuc",
+                        column: x => x.IdDanhMuc,
+                        principalTable: "DanhMucs",
+                        principalColumn: "IdDanhMuc",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DanhMucPhims_Phims_IdPhim",
+                        column: x => x.IdPhim,
+                        principalTable: "Phims",
+                        principalColumn: "IdPhim",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "NgayChieus",
                 columns: table => new
                 {
@@ -209,7 +248,7 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Migrations
                     GioBatDau = table.Column<TimeSpan>(type: "time", nullable: false),
                     GioKetThuc = table.Column<TimeSpan>(type: "time", nullable: false),
                     Cachieu = table.Column<int>(type: "int", nullable: false),
-                    TrangThai = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    TrangThai = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -293,6 +332,16 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_DanhMucPhims_IdDanhMuc",
+                table: "DanhMucPhims",
+                column: "IdDanhMuc");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DanhMucPhims_IdPhim",
+                table: "DanhMucPhims",
+                column: "IdPhim");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Ghes_LoaiGhe",
                 table: "Ghes",
                 column: "LoaiGhe");
@@ -368,7 +417,13 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "DanhMucPhims");
+
+            migrationBuilder.DropTable(
                 name: "HoaDons");
+
+            migrationBuilder.DropTable(
+                name: "DanhMucs");
 
             migrationBuilder.DropTable(
                 name: "KhachHangs");

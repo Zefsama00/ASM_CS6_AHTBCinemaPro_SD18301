@@ -20,8 +20,14 @@
         </a>
     </div>
 }
-
+<div class="row mb-3">
+    <div class="col-md-6 text-end">
+        <button class="btn btn-success" @onclick="ShowAddModal">Thêm phim mới</button>
+    </div>
+</div>
 <div class="container">
+ 
+
     @if (ds == null)
     {
         <p><em>Đang tải...</em></p>
@@ -32,12 +38,7 @@
     }
     else
     {
-        <div class="row mb-3">
-            <div class="col-md-6 text-end">
-                <button class="btn btn-success" @onclick="ShowAddModal">Thêm phim mới</button>
-            </div>
-        </div>
-
+       
         <table class="table table-striped table-hover">
             <thead class="thead-dark">
                 <tr>
@@ -102,12 +103,19 @@
                         </div>
                         <div class="mb-3">
                             <label for="DangPhim" class="form-label">Dạng phim</label>
-                            <InputText id="DangPhim" class="form-control" @bind-Value="currentPhim.DangPhim" />
+                            <InputSelect id="DangPhim" class="form-control" @bind-Value="currentPhim.DangPhim">
+                                <option value="P">Loại P</option>
+                                <option value="K">Loại K</option>
+                                <option value="T13">Loại T13 (13+)</option>
+                                <option value="T16">Loại T16 (16+)</option>
+                                <option value="T18">Loại T18 (18+)</option>
+                                <option value="C">Loại C</option>
+                            </InputSelect>
                         </div>
+
                         <div class="mb-3">
                             <label for="TheLoai" class="form-label">Thể loại</label>
                             <InputSelect id="TheLoai" class="form-control" @bind-Value="currentPhim.TheLoai">
-                                <option value="">Chọn thể loại</option>
                                 @foreach (var loaiphims in loaiphim)
                                 {
                                     <option value="@loaiphims">@loaiphims</option>
@@ -136,6 +144,7 @@
     </div>
 }
 
+
 @code {
     private List<PhimVM> ds;
     private PhimVM currentPhim = new PhimVM();
@@ -156,7 +165,7 @@
     {
         try
         {
-            var response = await Http.GetStringAsync("api/Phim/listphim");
+            var response = await Http.GetStringAsync("api/Phim/phim");
             ds = JsonConvert.DeserializeObject<List<PhimVM>>(response);
             StateHasChanged();
         }
@@ -273,7 +282,7 @@
         AlertMessage = message;
         AlertType = alertType;
         StateHasChanged();
-        _ = Task.Delay(3000).ContinueWith(t =>
+        _ = Task.Delay(15000).ContinueWith(t =>
         {
             AlertMessage = null;
             InvokeAsync(StateHasChanged);

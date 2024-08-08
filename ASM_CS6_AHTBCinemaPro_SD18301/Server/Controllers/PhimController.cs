@@ -9,6 +9,7 @@
     using Microsoft.EntityFrameworkCore.ChangeTracking;
     using Microsoft.EntityFrameworkCore.ValueGeneration;
     using ASM_CS6_AHTBCinemaPro_SD18301.Model;
+using ASM_CS6_AHTBCinemaPro_SD18301.Shared.Models;
 
     namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
     {
@@ -40,7 +41,12 @@
             var rooms = await _context.Phongs.Select(p => p.SoPhong).ToListAsync();
             return Ok(rooms);
         }
-
+        [HttpGet("danhmuc")]
+        public async Task<ActionResult<IEnumerable<string>>> Getdanhmuc()
+        {
+            var danhmuc = await _context.DanhMucs.ToListAsync();
+            return Ok(danhmuc);
+        }
         [HttpGet("tenphim")]
         public async Task<ActionResult<IEnumerable<string>>> GetTenPhim()
         {
@@ -50,9 +56,12 @@
         [HttpGet("phim")]
         public async Task<ActionResult<IEnumerable<Phim>>> GetPhims()
         {
-            var dsphim = await _context.Phims.ToListAsync();
+            var dsphim = await _context.Phims.Include(g => g.DanhMucPhim)
+                .ThenInclude(dm => dm.DanhMuc)
+                .ToListAsync();
             return Ok(dsphim);
         }
+ 
         // GET: api/Phim/listphim
         [HttpGet("listphim")]
         public async Task<ActionResult<List<PhimVM>>> GetPhim()
@@ -106,34 +115,46 @@
                 return Ok(phim);
             }
 
-            // POST: api/Phim
-            [HttpPost]
-            [Route("AddPhim")]
-            public async Task<ActionResult<Phim>> AddPhim(Phim phim)
+        // POST: api/Phim
+        [HttpPost]
+        [Route("AddPhim")]
+        public async Task<ActionResult<Phim>> AddPhim(Phim phim)
+        {
+            if (string.IsNullOrEmpty(phim.IdPhim))
             {
-                if (string.IsNullOrEmpty(phim.IdPhim))
-                {
-                    phim.IdPhim = new PhimIdGenerator().Next(null);
-                }
-
-                if (_context.Phims.Any(e => e.IdPhim == phim.IdPhim))
-                {
-                    return BadRequest("ID Phim đã tồn tại.");
-                }
-
-                var theloai = await _context.LoaiPhims.FirstOrDefaultAsync(x => x.TenLoai == phim.TheLoai);
-
-                if (theloai == null)
-                {
-                    return BadRequest("Thể loại không tồn tại.");
-                }
-
-                phim.TheLoai = theloai.IdLP; 
-
-                _context.Phims.Add(phim);
-                await _context.SaveChangesAsync();
-                return CreatedAtAction(nameof(GetPhim), new { id = phim.IdPhim }, phim);
+                phim.IdPhim = new PhimIdGenerator().Next(null);
             }
+
+            if (_context.Phims.Any(e => e.IdPhim == phim.IdPhim))
+            {
+                return BadRequest("ID Phim đã tồn tại.");
+            }
+
+            var theloai = await _context.LoaiPhims.FirstOrDefaultAsync(x => x.TenLoai == phim.TheLoai);
+
+            if (theloai == null)
+            {
+                return BadRequest("Thể loại không tồn tại.");
+            }
+
+            phim.TheLoai = theloai.IdLP;
+
+            _context.Phims.Add(phim);
+            await _context.SaveChangesAsync();
+
+            // Only add the DanhMucPhim entry after the Phim has been successfully added
+            var danhMucPhim = new DanhMucPhim
+            {
+                IdDanhMuc = 1,  // Fixed ID for the category
+                IdPhim = phim.IdPhim
+            };
+
+            _context.DanhMucPhims.Add(danhMucPhim);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetPhim), new { id = phim.IdPhim }, phim);
+        }
+
 
 
         // PUT: api/Phim/{id}

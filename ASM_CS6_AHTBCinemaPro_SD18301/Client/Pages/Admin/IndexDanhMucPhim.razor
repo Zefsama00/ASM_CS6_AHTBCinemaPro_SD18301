@@ -1,0 +1,207 @@
+﻿@page "/danhmuc"
+@using ASM_CS6_AHTBCinemaPro_SD18301.Models
+@using ASM_CS6_AHTBCinemaPro_SD18301.Shared.Models
+@using Newtonsoft.Json
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+@using Microsoft.AspNetCore.Components.Forms
+@using ASM_CS6_AHTBCinemaPro_SD18301.Client.Pages.Admin.SharedAdmin
+@using System.Text
+@layout _LayoutAdmin
+
+<h3>Danh sách danh mục</h3>
+
+@if (!string.IsNullOrEmpty(AlertMessage))
+{
+    <div class="alert alert-@AlertType alert-dismissible fade show" role="alert">
+        @AlertMessage
+        <button type="button" class="btn-close" aria-label="Close" @onclick="() => AlertMessage = null"></button>
+    </div>
+}
+
+<div class="container">
+    @if (danhMucs == null)
+    {
+        <p><em>Đang tải...</em></p>
+    }
+    else if (danhMucs.Count == 0)
+    {
+        <p>Không có danh mục nào.</p>
+    }
+    else
+    {
+        <table class="table table-striped table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Tên Phim</th>
+                    <th>Danh Mục</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in danhMucs)
+                {
+                    <tr>
+                        <td>@item.Phim.TenPhim</td>
+                        <td>@item.DanhMuc.TenDanhMuc</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm" @onclick="() => EditDanhmuc(item)">Sửa</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+@if (IsModalVisible)
+{
+    <div class="modal show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@((isEditing ? "Sửa danh mục" : "Thêm danh mục mới"))</h5>
+                    <button type="button" class="btn-close" aria-label="Đóng" @onclick="CloseModal"></button>
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="@currentDanhMuc" OnValidSubmit="HandleValidSubmit">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+                        <div class="mb-3">
+                            <label for="Phim" class="form-label">Tên Phim</label>
+                            <InputSelect id="Phim" class="form-control" @bind-Value="currentDanhMuc.IdPhim">
+                                <option value="">Chọn phim</option>
+                                @foreach (var phim in movies)
+                                {
+                                    <option value="@phim.IdPhim">@phim.TenPhim</option>
+                                }
+                            </InputSelect>
+                        </div>
+                        <div class="mb-3">
+                            <label for="DanhMuc" class="form-label">Danh Mục</label>
+                            <InputSelect id="DanhMuc" class="form-control" @bind-Value="currentDanhMuc.IdDanhMuc">
+                                <option value="">Chọn danh mục</option>
+                                @foreach (var danhMuc in categories)
+                                {
+                                    <option value="@danhMuc.IdDanhMuc">@danhMuc.TenDanhMuc</option>
+                                }
+                            </InputSelect>
+                        </div>
+                        <button type="submit" class="btn btn-primary">@((isEditing ? "Lưu thay đổi" : "Thêm danh mục"))</button>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<DanhMucPhim> danhMucs;
+    private List<Phim> movies;
+    private List<DanhMuc> categories;
+    private DanhMucPhim currentDanhMuc = new DanhMucPhim();
+    private bool isEditing = false;
+    private bool IsModalVisible = false;
+    private string AlertMessage;
+    private string AlertType;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDanhMucPhim();
+        await LoadMovies();
+        await LoadCategories();
+    }
+
+    private async Task LoadDanhMucPhim()
+    {
+        try
+        {
+            var response = await Http.GetStringAsync("api/DanhMucPhims/danhmuc");
+            danhMucs = JsonConvert.DeserializeObject<List<DanhMucPhim>>(response);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading data: {ex.Message}");
+        }
+    }
+
+    private async Task LoadMovies()
+    {
+        try
+        {
+            var response = await Http.GetStringAsync("api/Phim/phim");
+            movies = JsonConvert.DeserializeObject<List<Phim>>(response);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading movies: {ex.Message}");
+        }
+    }
+
+    private async Task LoadCategories()
+    {
+        try
+        {
+            var response = await Http.GetStringAsync("api/Phim/danhmuc");
+            categories = JsonConvert.DeserializeObject<List<DanhMuc>>(response);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading categories: {ex.Message}");
+        }
+    }
+
+    private void ShowAddModal()
+    {
+        currentDanhMuc = new DanhMucPhim();
+        isEditing = false;
+        IsModalVisible = true;
+    }
+
+    private void EditDanhmuc(DanhMucPhim danhMuc)
+    {
+        currentDanhMuc = new DanhMucPhim
+            {
+                IDDanhMucPhim = danhMuc.IDDanhMucPhim,
+                IdPhim = danhMuc.IdPhim,
+                IdDanhMuc = danhMuc.IdDanhMuc
+            };
+        isEditing = true;
+        IsModalVisible = true;
+    }
+
+    private void CloseModal()
+    {
+        IsModalVisible = false;
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            var jsonContent = JsonConvert.SerializeObject(currentDanhMuc);
+            var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+            if (isEditing)
+            {
+                await Http.PutAsync($"api/DanhMucPhims/{currentDanhMuc.IDDanhMucPhim}", content);
+                AlertMessage = "Cập nhật thành công!";
+            }
+            else
+            {
+                await Http.PostAsync("api/DanhMucPhims", content);
+                AlertMessage = "Thêm danh mục thành công!";
+            }
+
+            AlertType = "success";
+            await LoadDanhMucPhim();
+            CloseModal();
+        }
+        catch (Exception ex)
+        {
+            AlertMessage = $"Lỗi: {ex.Message}";
+            AlertType = "danger";
+        }
+    }
+}
