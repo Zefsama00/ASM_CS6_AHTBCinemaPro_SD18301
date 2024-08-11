@@ -56,6 +56,7 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<Phong>> PostPhong(Phong phong)
         {
+
             if (string.IsNullOrEmpty(phong.IdPhong))
             {
                 phong.IdPhong = new PhongGenerator().Next(null);

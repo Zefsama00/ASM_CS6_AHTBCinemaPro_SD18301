@@ -11,7 +11,6 @@
 @{
 }
 <style>
-
     * {
         margin: 0;
         padding: 0;
@@ -31,7 +30,11 @@
         }
 
     body {
-        background: #eee
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #eee; /* Màu nền của trang */
+        overflow: hidden; /* Đảm bảo không có thanh cuộn */
     }
 
 
@@ -184,6 +187,35 @@
     }
 </style>
 <body>
+    <br />
+    <br />
+    <div class="flip-card">
+        <div class="flip-card-inner">
+            <div class="flip-card-front">
+                <h2 class="bank-name">AHTB Bank</h2>
+                <div class="card-number">1234 5678 9012 3456</div>
+                <div class="card-holder">
+                    <span>Card Holder:</span>
+                    <span class="holder-name"> G Dragon</span>
+                </div>
+                <div class="expiry-date">
+                    <span>Expiry:</span>
+                    <span class="expiry">12/08</span>
+                </div>
+            </div>
+            <div class="flip-card-back">
+                <h2 class="bank-name">AHTB Bank</h2>
+                <div class="card-number">**** **** **** 3456</div>
+                <div class="expiry-date">
+                    <span>Expiry:</span>
+                    <span class="expiry">12/08</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
     <div class="container">
         <div class="row">
             <div class="col-12 mt-4">
@@ -336,7 +368,6 @@
                         Converters = { new CustomTimeSpanConverter() },
                         ContractResolver = new CamelCasePropertyNamesContractResolver()
                     };
-
                 multiModel = JsonConvert.DeserializeObject<Multimodel>(jsonResponse, settings);
 
                 if (multiModel?.Phims != null && multiModel.Phims.Any())

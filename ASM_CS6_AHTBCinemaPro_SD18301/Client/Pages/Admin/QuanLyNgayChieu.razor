@@ -185,7 +185,9 @@ else
                     <td>
                         <button class="btn btn-primary" @onclick="async () => await EditNgayChieu(item)"><i class="fas fa-edit"></i> Cập nhật</button>
                     </td>
+
                 </tr>
+                Console.WriteLine($"IdCaChieu: {item.IdCaChieu}, NgayChieu: {item.NgayChieu}, Phim: {item.Phim}, Phong: {item.Phong}");
             }
         </tbody>
     </table>
@@ -212,7 +214,6 @@ else
             <div class="modal-body">
                 <EditForm Model="newNgayChieu" OnValidSubmit="HandleValidSubmit">
                     <DataAnnotationsValidator />
-                    <ValidationSummary />
 
                     <div class="form-group">
                         <label for="ngayChieu">Ngày Chiếu:</label>

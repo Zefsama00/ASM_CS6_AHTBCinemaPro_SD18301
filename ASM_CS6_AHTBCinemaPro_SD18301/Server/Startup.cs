@@ -1,4 +1,6 @@
+using ASM_CS6_AHTBCinemaPro_SD18301.Client.Service;
 using ASM_CS6_AHTBCinemaPro_SD18301.Data;
+using ASM_CS6_AHTBCinemaPro_SD18301.Shared.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -61,6 +63,8 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server
                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
            };
        });
+            services.Configure<SmtpSettings>(Configuration.GetSection("SmtpSettings"));
+            services.AddTransient<EmailService>();
 
         }
 

@@ -30,16 +30,16 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
 
         // GET: api/Ves/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Ve>> GetVe(int id)
+        public async Task<ActionResult> GetVe(string id)
         {
-            var ve = await _context.Ves.FindAsync(id);
+            var ve = await _context.Ves.FirstOrDefaultAsync(c=> c.Ghe == id);
 
             if (ve == null)
             {
                 return NotFound();
             }
 
-            return ve;
+            return Ok(ve);
         }
 
         // PUT: api/Ves/5

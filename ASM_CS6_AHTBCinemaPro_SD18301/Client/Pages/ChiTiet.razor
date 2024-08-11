@@ -1,15 +1,18 @@
 ﻿@inject HttpClient Http
 @inject IJSRuntime JS
 @inject NavigationManager NavigationManager
+@inject CustomAuthenticationStateProvider AuthenticationStateProvider
+@using ASM_CS6_AHTBCinemaPro_SD18301.Client.Service
 @using ASM_CS6_AHTBCinemaPro_SD18301.Models
 @using ASM_CS6_AHTBCinemaPro_SD18301.Shared.Models
 @using System.Text.Json
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.EntityFrameworkCore
 @using Newtonsoft.Json
 @using Newtonsoft.Json.Serialization
-@using static ASM_CS6_AHTBCinemaPro_SD18301.Models.GioChieu
+@using System.Security.Claims
 
 @page "/chitiet/{Id}"
-
 
 <head>
 
@@ -85,11 +88,15 @@
                                                     <div class="d-flex align-items-center justify-content-center">
                                                         <div class="col-md-3 mb-3">
                                                             <div class="d-flex align-items-center justify-content-center">
-                                                                <button class="btn @(selectedSeats.Contains(ghe.IdGhe) ? "btn btn-primary" : ghe.TrangThai == "Đang chiếu" ? "btn btn-success" : "btn btn-danger") custom-width-button"
-                                                                        @onclick="() => ToggleSeat(ghe.IdGhe)"
-                                                                        disabled="@(ghe.TrangThai == "Đã chiếu")">
+                                                                <button class="btn @(selectedSeats.Contains(ghe.IdGhe) ? "btn-primary" :
+                                                                     ghe.TrangThai == "Đã đặt" ? "btn-danger" :
+                                                                     ghe.TrangThai == "Đang chờ thanh toán" ? "btn-warning" :
+                                                                     "btn-outline-dark") custom-width-button"
+                                                                     @onclick="() => ToggleSeatAndCreateInvoice(ghe.IdGhe)"
+                                                                     disabled="@(ghe.TrangThai == "Đã đặt" || ghe.TrangThai == "Đang chờ thanh toán")">
                                                                     @ghe.TenGhe
                                                                 </button>
+
                                                             </div>
                                                         </div>
 
@@ -121,7 +128,7 @@
             @foreach (var phim in movieDetails.Phims)
             {
                 <div class="col-lg-3 mt-3">
-                    <img src="/image/movies/theatre-dead.jpg" alt="@phim.TenPhim" class="img-fluid">
+                    <img src="/Image/phim/@phim.HinhAnh" alt="@phim.TenPhim" class="img-fluid">
                 </div>
 
                 <div class="col-lg-9">
@@ -203,11 +210,12 @@ else
 @code {
     [Parameter]
     public string Id { get; set; }
+    public string userId = string.Empty;
 
     public Multimodel movieDetails;
     private List<string> selectedSeats = new List<string>();
 
-    private void ToggleSeat(string seatId)
+    private async void ToggleSeat(string seatId)
     {
         if (selectedSeats.Contains(seatId))
         {
@@ -218,9 +226,69 @@ else
             selectedSeats.Add(seatId);
         }
     }
-
-    private void ConfirmSelection()
+    private void ToggleSeatAndCreateInvoice(string seatId)
     {
+        // Thêm hoặc xóa ghế khỏi danh sách ghế đã chọn
+        ToggleSeat(seatId);
+    }
+
+    private async Task CreateInvoicesForSelectedSeats()
+    {
+        var idPhim = Id;
+        int pricePerSeat = 45000;
+
+        // Get user ID from JWT
+        userId = await JS.InvokeAsync<string>("localStorage.getItem", "userId");
+
+        foreach (var seatId in selectedSeats)
+        {
+            // Fetch seat with associated ticket
+            var seatResponse = await Http.GetStringAsync($"api/Ves/{seatId}");
+            string TrangThai = "Đang chờ thanh toán";
+            var suatrangthai = await Http.PutAsJsonAsync($"api/Ghes/SetPendingPaymentStatus/{seatId}", TrangThai);
+            if (seatResponse != null)
+            {
+                var seat = JsonConvert.DeserializeObject<Ve>(seatResponse);
+                await JS.InvokeVoidAsync("console.log", seat.IdVe);
+                        var thanhToanRequest = new ThanhToanRequest
+                            {
+                                IdPhim = idPhim,
+                                IdVe = seat.IdVe,
+                                TongTien = pricePerSeat,
+                                idUser = userId,
+                            };
+
+                    var response = await Http.PostAsJsonAsync("api/ChiTiet/CreateInvoice", thanhToanRequest);
+
+                    
+            }
+                else
+                {
+                    await JS.InvokeVoidAsync("Swal.fire", "Lỗi!", $"Không thể lấy thông tin ghế {seatId}.", "error");   
+                }
+        }
+    }
+
+
+
+
+    private async Task<string> GetUserIdFromJwt()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            return user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+        }
+
+        return null;
+    }
+
+    private async void ConfirmSelection()
+    {
+        await CreateInvoicesForSelectedSeats();
+        await Task.Delay(1000);
         var idPhim = movieDetails.Phims.FirstOrDefault()?.IdPhim;
         var ngayChieu = movieDetails.NgayChieus.FirstOrDefault();
         var idCaChieu = ngayChieu?.IdCaChieu ?? 0;
@@ -230,9 +298,10 @@ else
         int pricePerSeat = 45000;
         int totalPrice = numberOfSeats * pricePerSeat;
 
-        // Điều hướng đến trang thanh toán với các thông tin cần thiết sử dụng query string
+        // Điều hướng đến trang thanh toán với các tham số
         NavigationManager.NavigateTo($"/thanhtoan?seats={string.Join(",", selectedSeats)}&idPhim={idPhim}&idCaChieu={idCaChieu}&idGioChieu={idGioChieu}&totalPrice={totalPrice}", true);
     }
+
 
 
     private void ReloadPage(string seatId, string idPhim, int idCaChieu, int idGioChieu)
@@ -254,6 +323,7 @@ else
     {
         try
         {
+            // Lấy chi tiết phim dựa trên IdPhim
             var response = await Http.GetAsync($"api/ChiTiet/GetChiTiet/{Id}");
             var jsonResponse = await response.Content.ReadAsStringAsync();
 

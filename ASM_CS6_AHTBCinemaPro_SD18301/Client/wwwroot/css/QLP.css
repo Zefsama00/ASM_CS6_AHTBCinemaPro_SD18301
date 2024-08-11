@@ -1,0 +1,28 @@
+﻿.table tbody tr:hover {
+    background-color: #f5f5f5; /* Màu nền khi hover */
+    cursor: pointer; /* Thay đổi con trỏ chuột */
+}
+.btn-primary:hover {
+    background-color: #0056b3; /* Màu nền khi hover */
+    border-color: #0056b3; /* Màu viền khi hover */
+}
+
+.btn-warning:hover {
+    background-color: #e0a800; /* Màu nền khi hover */
+    border-color: #d39e00; /* Màu viền khi hover */
+    color: #fff; /* Màu chữ khi hover */
+}
+.table th i, .table td i {
+    transition: color 0.3s ease; /* Hiệu ứng chuyển màu khi hover */
+}
+
+    .table th i:hover, .table td i:hover {
+        color: #007bff; /* Màu sắc khi hover */
+    }
+.table img {
+    transition: transform 0.3s ease; /* Hiệu ứng phóng to hình ảnh */
+}
+
+    .table img:hover {
+        transform: scale(1.05); /* Phóng to hình ảnh khi hover */
+    }

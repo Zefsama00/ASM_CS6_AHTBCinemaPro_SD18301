@@ -20,6 +20,25 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
         {
             _context = context;
         }
+        [HttpGet("{idGhe}")]
+        public async Task<IActionResult> GetGheById(string idGhe)
+        {
+            if (string.IsNullOrEmpty(idGhe))
+            {
+                return BadRequest("IdGhe cannot be null or empty.");
+            }
+
+            var ghe = await _context.Ghes
+                .Include(g => g.Ves)  // Include the associated Ve entity
+                .FirstOrDefaultAsync(g => g.IdGhe == idGhe);
+
+            if (ghe == null)
+            {
+                return NotFound($"No seat found with IdGhe: {idGhe}");
+            }
+
+            return Ok(ghe);
+        }
 
         // GET: api/Ghes
         [HttpGet]
@@ -130,6 +149,53 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
             }
 
             return NoContent();
+        }
+        [HttpPut("UpdateStatusToBooked/{id}")]
+        public async Task<IActionResult> UpdateStatusToBooked(string id)
+        {
+            var seat = await _context.Ghes.FindAsync(id);
+            if (seat == null)
+            {
+                return NotFound();
+            }
+
+            seat.TrangThai = "Đã đặt";
+            _context.Entry(seat).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpPut("SetPendingPaymentStatus/{id}")]
+        public async Task<IActionResult> SetPendingPaymentStatus(string id, [FromBody] string trangThai)
+        {
+            var ghe = await _context.Ghes.FindAsync(id);
+            if (ghe == null)
+            {
+                return NotFound(new { success = false, message = "Ghế không tồn tại." });
+            }
+
+            // Update the seat status to "Đang chờ thanh toán"
+            ghe.TrangThai = trangThai;
+            _context.Entry(ghe).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!GheExists(id))
+                {
+                    return NotFound(new { success = false, message = "Ghế không tồn tại." });
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return Ok(new { success = true, message = "Trạng thái ghế đã được cập nhật thành công." });
         }
 
         private bool GheExists(string id)

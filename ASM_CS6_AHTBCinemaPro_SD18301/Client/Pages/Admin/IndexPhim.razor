@@ -1,400 +1,180 @@
 ﻿@page "/QLPhim"
 @using ASM_CS6_AHTBCinemaPro_SD18301.Client.Pages.Admin.SharedAdmin
 @using ASM_CS6_AHTBCinemaPro_SD18301.Model
-@using ASM_CS6_AHTBCinemaPro_SD18301.Models
+@using ASM_CS6_AHTBCinemaPro_SD18301.Shared.Models
 @using ASM_CS6_AHTBCinemaPro_SD18301.Shared.ViewModels
 @using Newtonsoft.Json
+@using System.IO
 @inject HttpClient Http
 @inject IJSRuntime JS
 @inject NavigationManager Navigation
 @layout _LayoutAdmin
+<link href="css/QLP.css" rel="stylesheet">
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
 @code {
     private List<PhimVM> movies;
-    private List<LoaiPhim> categories;
-    private List<GioChieuViewModel> showtimes;
-
-    private string selectedCategory;
     private PhimVM newMovie = new PhimVM();
     private PhimVM updateMovie = new PhimVM();
-
-    private string notificationMessage;
-    private string notificationType;
-    private bool showAlert;
     private bool isEditMode = false;
-    private string editingMovieId;
+    // private List<LoaiPhim> categories = new List<LoaiPhim>();
+    private bool sortAscending = true; // Biến lưu trữ trạng thái sắp xếp
 
+
+    private async Task SortByDangPhim()
+    {
+        if (sortAscending)
+        {
+            movies = movies.OrderBy(m => m.DangPhim).ToList();
+        }
+        else
+        {
+            movies = movies.OrderByDescending(m => m.DangPhim).ToList();
+        }
+        sortAscending = !sortAscending; // Chuyển đổi trạng thái sắp xếp
+        StateHasChanged(); // Cập nhật giao diện người dùng
+    }
+
+    private Task<List<PhimVM>> GetMoviesAsync()
+    {
+        // Lấy danh sách phim từ cơ sở dữ liệu hoặc API
+        // Placeholder method for demonstration
+        return Task.FromResult(new List<PhimVM>());
+    }
     protected override async Task OnInitializedAsync()
     {
-        await LoadData();
+        var responsemovies = await Http.GetStringAsync("api/phim/listphim");
+        movies = JsonConvert.DeserializeObject<List<PhimVM>>(responsemovies);
+        // var responseloaiphim = await Http.GetStringAsync("api/Loaiphim");
+        // categories = JsonConvert.DeserializeObject<List<LoaiPhim>>(responseloaiphim);
     }
 
-    private async Task LoadData()
-    {
-        try
-        {
-            var response = await Http.GetStringAsync("api/Phim/listphim");
-            movies = JsonConvert.DeserializeObject<List<PhimVM>>(response);
-
-            var categoryResponse = await Http.GetStringAsync("api/LoaiPhim");
-            categories = JsonConvert.DeserializeObject<List<LoaiPhim>>(categoryResponse);
-
-            var showtimeResponse = await Http.GetStringAsync("api/giochieu");
-            showtimes = JsonConvert.DeserializeObject<List<GioChieuViewModel>>(showtimeResponse);
-        }
-        catch (Exception ex)
-        {
-            notificationMessage = "Lỗi tải dữ liệu.";
-            notificationType = "error";
-            showAlert = true;
-        }
-    }
-
-    private async Task OpenAddModal()
+    private async Task AddMovie()
     {
         isEditMode = false;
-        newMovie = new PhimVM(); // Reset the new movie form
-
-        await JS.InvokeVoidAsync("showAddModal");
+        newMovie = new PhimVM();
+        await Task.Yield();
+        JS.InvokeVoidAsync("showModal", isEditMode);
     }
 
-    private async Task OpenEditModal(PhimVM item)
+    private async Task EditMovie(PhimVM movie)
     {
-        selectedCategory = item.TheLoai;
         isEditMode = true;
-        updateMovie = new PhimVM
-            {
-                IdPhim = item.IdPhim,
-                TenPhim = item.TenPhim,
-                DienVien = item.DienVien,
-                DangPhim = item.DangPhim,
-                TheLoai = item.TheLoai,
-                ThoiLuong = item.ThoiLuong,
-                HinhAnh = item.HinhAnh,
-            };
-
-        editingMovieId = item.IdPhim;
-
-        await JS.InvokeVoidAsync("showEditModal");
+        updateMovie = movie;
+        await Task.Yield();
+        JS.InvokeVoidAsync("showModal", isEditMode);
     }
 
     private async Task HandleValidSubmit()
     {
-        HttpResponseMessage response = null;
-        try
+        if (isEditMode)
         {
-            if (isEditMode)
-            {
-                response = await Http.PutAsJsonAsync($"api/Phim/{editingMovieId}", updateMovie);
-            }
-            else
-            {
-                response = await Http.PostAsJsonAsync("api/Phim/AddPhim", newMovie);
-            }
-
-            if (response.IsSuccessStatusCode)
-            {
-                notificationMessage = isEditMode ? "Cập nhật phim thành công!" : "Thêm phim thành công!";
-                notificationType = "success";
-                showAlert = true;
-
-                isEditMode = false;
-                await JS.InvokeVoidAsync("hideModal", isEditMode ? "#editModal" : "#addModal");
-
-                await RefreshData();
-                await JS.InvokeVoidAsync("handleAlertAndReload");
-            }
-            else
-            {
-                var errorResponse = await response.Content.ReadAsStringAsync();
-                notificationMessage = isEditMode ? "Cập nhật phim thất bại." : "Thêm phim thất bại.";
-                notificationType = "error";
-                showAlert = true;
-
-                await JS.InvokeVoidAsync("hideModal", isEditMode ? "#editModal" : "#addModal");
-                await JS.InvokeVoidAsync("handleAlertAndReload");
-            }
+            await Http.PutAsJsonAsync($"api/phim/{updateMovie.IdPhim}", updateMovie);
         }
-        catch (Exception ex)
+        else
         {
-            notificationMessage = isEditMode ? "Cập nhật thất bại" : "Thêm thất bại";
-            notificationType = "error";
-            showAlert = true;
-
-            await JS.InvokeVoidAsync("hideModal", isEditMode ? "#editModal" : "#addModal");
-            await JS.InvokeVoidAsync("handleAlertAndReload");
+            await Http.PostAsJsonAsync("api/phim/addphim", newMovie);
         }
+
+        JS.InvokeVoidAsync("hideModal", isEditMode);
+        JS.InvokeVoidAsync("handleAlertAndReload");
     }
 
-    private async Task RefreshData()
-    {
-        await LoadData();
-        StateHasChanged();
-    }
-
-    private string GetAlertClass(string alertType)
-    {
-        return alertType == "success" ? "alert-success" : "alert-danger";
-    }
-
-    [JSInvokable]
-    public async Task SetShowAlert(bool show)
-    {
-        showAlert = show;
-        if (!show)
-        {
-            notificationMessage = string.Empty;
-            notificationType = string.Empty;
-        }
-        await InvokeAsync(StateHasChanged);
-    }
     private async Task UploadImage(InputFileChangeEventArgs e, PhimVM movie)
     {
         var file = e.File;
-        if (file != null)
+        using (var content = new MultipartFormDataContent())
         {
-            // Lưu tên tệp vào thuộc tính HinhAnh
+            var fileContent = new StreamContent(file.OpenReadStream());
+            fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+            content.Add(fileContent, "file", file.Name);
             movie.HinhAnh = file.Name;
-
-            // Đọc file và chuyển đổi thành base64 string nếu cần
-            using var stream = file.OpenReadStream();
-            var buffer = new byte[file.Size];
-            await stream.ReadAsync(buffer, 0, (int)file.Size);
-            var base64String = Convert.ToBase64String(buffer);
-
-            // Cập nhật URL cho hình ảnh preview
-            await JS.InvokeVoidAsync("showImagePreview", $"data:{file.ContentType};base64,{base64String}");
+            var response = await Http.PostAsync("api/phim/upload-image", content);
+            if (response.IsSuccessStatusCode)
+            {
+                var imagePath = await response.Content.ReadAsStringAsync();
+            }
+            else
+            {
+                // Xử lý lỗi nếu việc upload ảnh không thành công
+            }
         }
     }
+
 }
 
-<h1>Danh sách phim</h1>
-<button class="btn btn-primary" @onclick="OpenAddModal">
+<h2 class="text-center">
+    <i class="fas fa-film"></i> Quản lý Phim
+</h2>
+
+<button class="btn btn-primary mb-2" @onclick="AddMovie">
     <i class="fas fa-plus"></i> Thêm Phim Mới
 </button>
 
-@if (showAlert)
-{
-    <div id="notificationAlert" class="alert @GetAlertClass(notificationType) alert-dismissible fade show" role="alert">
-        @notificationMessage
-        <button type="button" class="btn-close" aria-label="Close" @onclick="() => SetShowAlert(false)"></button>
-    </div>
-}
-
-@if (movies == null)
-{
-    <p>Loading...</p>
-}
-else
-{
-    <table class="table text-white">
-        <thead>
+<table class="table table-striped table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th><i class="fas fa-film"></i> Tên Phim</th>
+            <th><i class="fas fa-tags"></i> Thể Loại</th>
+            <th><i class="fas fa-clock"></i> Thời Lượng</th>
+            <th style="cursor:pointer" @onclick="SortByDangPhim">
+                <i class="fas fa-film"></i> Dạng Phim
+            </th>
+            <th><i class="fas fa-users"></i> Diễn Viên</th>
+            <th><i class="fas fa-image"></i> Hình Ảnh</th>
+            <th><i class="fas fa-cogs"></i> Hành Động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (movies == null)
+        {
             <tr>
-                <th><i class="fas fa-film"></i> Tên Phim</th>
-                <th><i class="fas fa-calendar-alt"></i> Thể Loại</th>
-                <th><i class="fas fa-clock"></i> Thời Lượng</th>
-                <th><i class="fas fa-image"></i> Hình Ảnh</th>
-                <th><i class="fas fa-cogs"></i> Hành Động</th>
+                <td colspan="7" class="text-center"><em>Loading....</em></td>
             </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in movies)
+        }
+        else
+        {
+            @foreach (var movie in movies)
             {
                 <tr>
-                    <td>@item.TenPhim</td>
-                    <td>@item.TheLoai</td>
-                    <td>@item.ThoiLuong phút</td>
+                    <td>@movie.TenPhim</td>
+                    <td>@movie.TheLoai</td>
+                    <td>@movie.ThoiLuong</td>
+                    <td>@movie.DangPhim</td>
+                    <td>@movie.DienVien</td>
                     <td>
-                        <img src="/Image/phim/@item.HinhAnh" alt="@item.HinhAnh" class="img-fluid" style="max-width: 100px; height: auto;" />
+                        <img src="/image/Phim2/@movie.HinhAnh" alt="@movie.HinhAnh" style="width:100px; height:auto;" />
                     </td>
                     <td>
-                        <button class="btn btn-primary" @onclick="() => OpenEditModal(item)">
-                            <i class="fas fa-edit"></i> Cập nhật
+                        <button class="btn btn-warning" @onclick="() => EditMovie(movie)">
+                            <i class="fas fa-edit"></i> Chỉnh Sửa
                         </button>
                     </td>
                 </tr>
             }
-        </tbody>
-    </table>
-}
-<!-- Modal cho thêm phim -->
-<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addModalLabel">
-                    <i class="fas fa-plus"></i> Thêm Phim Mới
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <EditForm Model="newMovie" OnValidSubmit="HandleValidSubmit">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary />
-                    <div class="form-group">
-                        <label for="tenPhim">Tên Phim:</label>
-                        <InputText id="tenPhim" class="form-control" @bind-Value="newMovie.TenPhim" />
-                        <ValidationMessage For="@(() => newMovie.TenPhim)" />
-                    </div>
-                    <div class="form-group">
-                        <label for="theLoai">Thể Loại:</label>
-                        <InputSelect id="theLoai" class="form-control" @bind-Value="newMovie.TheLoai">
-                            <option value="">Chọn thể loại</option>
-                            @if (categories == null)
-                            {
-                                <p><em>Loading.....</em></p>
-                            }
-                            else
-                            {
-                                @foreach (var category in categories)
-                                {
-                                    <option value="@category.IdLP">@category.TenLoai</option>
-                                }
-                            }
-                        </InputSelect>
-                        <ValidationMessage For="@(() => newMovie.TheLoai)" />
-                    </div>
-                    <div class="form-group">
-                        <label for="thoiLuong">Thời Lượng (phút):</label>
-                        <InputNumber id="thoiLuong" class="form-control" @bind-Value="newMovie.ThoiLuong" />
-                        <ValidationMessage For="@(() => newMovie.ThoiLuong)" />
-                    </div>
-                    <div class="form-group">
-                        <label for="dienVien">Diễn viên:</label>
-                        <InputText id="dienVien" class="form-control" @bind-Value="newMovie.DienVien" />
-                        <ValidationMessage For="@(() => newMovie.DienVien)" />
-                    </div>
-                    <div class="form-group">
-                        <label for="DangPhim">Dạng Phim:</label>
-                        <InputSelect id="DangPhim" class="form-control" @bind-Value="newMovie.DangPhim">
-                            <option value="">Chọn dạng phim</option>
-                            <option value="Trống"></option>
-                            <option value="Đầy">Chưa chiếu</option>
-                        </InputSelect>
-                        <ValidationMessage For="@(() => newMovie.DangPhim)" />
-                    </div>
-                    <div class="form-group">
-                        <label for="hinhAnh">Hình Ảnh:</label>
-                        <InputFile id="hinhAnh" class="form-control" accept=".jpg,.jpeg,.png,.gif" OnChange="@(e => UploadImage(e, newMovie))" />
-                        <img id="imagePreview" class="img-fluid mt-2" style="max-width: 300px; height: auto; display: none;" />
-                        <ValidationMessage For="@(() => newMovie.HinhAnh)" />
-                    </div>
-                    <button type="submit" class="btn btn-primary mt-2" style="float:right;">
-                        <i class="fas fa-save"></i> Lưu
-                    </button>
-                </EditForm>
-            </div>
-        </div>
-    </div>
-</div>
+        }
+    </tbody>
+</table>
 
-<!-- Modal cho chỉnh sửa phim -->
-<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">
-                    <i class="fas fa-edit"></i> Cập Nhật Thông Tin Phim
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <EditForm Model="updateMovie" OnValidSubmit="HandleValidSubmit">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary />
-                    <div class="form-group">
-                        <label for="tenPhim">Tên Phim:</label>
-                        <InputText id="tenPhim" class="form-control" @bind-Value="updateMovie.TenPhim" />
-                        <ValidationMessage For="@(() => updateMovie.TenPhim)" />
-                    </div>
-                    <div class="form-group">
-                        <label for="theLoai">Thể Loại:</label>
-                        <InputSelect id="theLoai" class="form-control" @bind-Value="updateMovie.TheLoai">
-                            <option value="">Chọn thể loại</option>
-                            @if (categories == null)
-                            {
-                                <p><em>Loading.....</em></p>
-                            }
-                            else
-                            {
-                                @foreach (var category in categories)
-                                {
-                                    <option value="@category.IdLP">@category.TenLoai</option>
-                                }
-                            }
-                        </InputSelect>
-                        <ValidationMessage For="@(() => updateMovie.TheLoai)" />
-                    </div>
-                    <div class="form-group">
-                        <label for="thoiLuong">Thời Lượng (phút):</label>
-                        <InputNumber id="thoiLuong" class="form-control" @bind-Value="updateMovie.ThoiLuong" />
-                        <ValidationMessage For="@(() => updateMovie.ThoiLuong)" />
-                    </div>
-                    <div class="form-group">
-                        <label for="dienVien">Diễn viên:</label>
-                        <InputText id="dienVien" class="form-control" @bind-Value="updateMovie.DienVien" />
-                        <ValidationMessage For="@(() => updateMovie.DienVien)" />
-                    </div>
-                    <div class="form-group">
-                        <label for="DangPhim">Dạng Phim:</label>
-                        <InputSelect id="DangPhim" class="form-control" @bind-Value="updateMovie.DangPhim">
-                            <option value="">@updateMovie.DangPhim</option>
-                            <option value="Trống"></option>
-                            <option value="Đầy">Chưa chiếu</option>
-                        </InputSelect>
-                        <ValidationMessage For="@(() => updateMovie.DangPhim)" />
-                    </div>
-                    <div class="form-group">
-                        <label for="hinhAnh">Hình Ảnh:</label>
-                        <InputFile id="hinhAnh" class="form-control" accept=".jpg,.jpeg,.png,.gif" OnChange="@(e => UploadImage(e, updateMovie))" />
-                        @if (!string.IsNullOrEmpty(updateMovie.HinhAnh))
-                        {
-                            <img src="/Image/phim/@updateMovie.HinhAnh" class="img-fluid mt-2" style="max-width: 100px; height: auto;" />
-                        }
-                        <ValidationMessage For="@(() => updateMovie.HinhAnh)" />
-                    </div>
-                    <button type="submit" class="btn btn-primary mt-2" style="float:right;">
-                        <i class="fas fa-save"></i> Lưu
-                    </button>
-                </EditForm>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- Modal cho thêm và chỉnh sửa phim -->
+<MovieModal Movie="isEditMode ? updateMovie : newMovie"
+            IsEditMode="isEditMode"
+            OnImageSelected="(e) => UploadImage(e, isEditMode ? updateMovie : newMovie)"
+            OnValidSubmit="HandleValidSubmit" />
 
 <script>
-    function showImagePreview(imageSrc) {
-        const imgPreview = document.getElementById('imagePreview');
-        if (imgPreview) {
-            imgPreview.src = imageSrc;
-            imgPreview.style.display = 'block';
-        }
-    }
+    document.getElementById('fileInput').addEventListener('change', function (event) {
+        var file = event.target.files[0];
+        var reader = new FileReader();
 
-    function showAddModal() {
-        var modal = new bootstrap.Modal(document.getElementById('addModal'));
-        modal.show();
-    }
+        reader.onload = function (e) {
+            var dataUrl = e.target.result;
+            // Hiển thị hình ảnh xem trước
+            document.getElementById('imagePreview').src = dataUrl;
+        };
 
-    function showEditModal() {
-        var modal = new bootstrap.Modal(document.getElementById('editModal'));
-        modal.show();
-    }
-
-    function handleAlertAndReload() {
-        var alert = document.getElementById("notificationAlert");
-        if (alert) {
-            setTimeout(function () {
-                alert.style.display = "none";
-                location.reload();
-            }, 3000);
-        }
-    }
-    window.handleAlertAndReload = function () {
-        location.reload();
-    }
+        reader.readAsDataURL(file);
+    });
 </script>
-

@@ -177,7 +177,9 @@ else
                         <button class="btn btn-primary" @onclick="async () => await EditGioChieu(item)"><i class="fas fa-edit"></i> Cập nhật</button>
                     </td>
                 </tr>
+
             }
+
         </tbody>
     </table>
 }
@@ -205,7 +207,6 @@ else
             <div class="modal-body">
                 <EditForm Model="newGioChieu" OnValidSubmit="HandleValidSubmit">
                     <DataAnnotationsValidator />
-                    <ValidationSummary />
 
                     <div class="form-group">
                         <label for="gioBatDau">Giờ Bắt Đầu:</label>
@@ -282,15 +283,11 @@ else
     window.handleAlertAndReload = function () {
         $('#notificationAlert').addClass('show');
         setTimeout(function () {
-
             $('#notificationAlert').addClass('fade');
-
             setTimeout(function () {
                 $('#notificationAlert').removeClass('show');
-
                 setTimeout(function () {
-                    Blazor.invokeMethodAsync('SetShowAlert', false);
-                    Blazor.invokeMethodAsync('AssemblyName', 'RefreshData');
+                    Blazor.invokeMethodAsync('ASM_CS6_AHTBCinemaPro_SD18301.Client.Pages.QLGC', 'RefreshData');
                 }, 500);
             }, 100);
         }, 3000);

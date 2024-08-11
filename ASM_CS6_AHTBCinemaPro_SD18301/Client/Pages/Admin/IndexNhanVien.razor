@@ -193,34 +193,17 @@
         {
             if (isEditing)
             {
-                // Only update ChucVu
+                // Chỉ cập nhật Chức Vụ
                 var response = await Http.PutAsJsonAsync($"api/NhanVien/{currentNhanVien.IdNV}", currentNhanVien);
-                if (response.IsSuccessStatusCode)
-                {
-                    AlertType = "success";
-                    AlertMessage = "Cập nhật chức vụ nhân viên thành công";
-                }
-                else
-                {
-                    AlertType = "danger";
-                    AlertMessage = "Cập nhật chức vụ nhân viên thất bại";
-                }
+                await ShowSweetAlert(response.IsSuccessStatusCode, "Cập nhật chức vụ nhân viên thành công", "Cập nhật chức vụ nhân viên thất bại");
             }
             else
             {
-                // Add new employee
+                // Thêm nhân viên mới
                 var response = await Http.PostAsJsonAsync("api/NhanVien", currentNhanVien);
-                if (response.IsSuccessStatusCode)
-                {
-                    AlertType = "success";
-                    AlertMessage = "Thêm nhân viên thành công";
-                }
-                else
-                {
-                    AlertType = "danger";
-                    AlertMessage = "Thêm nhân viên thất bại";
-                }
+                await ShowSweetAlert(response.IsSuccessStatusCode, "Thêm nhân viên thành công", "Thêm nhân viên thất bại");
             }
+
             await LoadNhanViens();
             CloseModal();
         }
@@ -230,6 +213,18 @@
             AlertMessage = $"Đã xảy ra lỗi: {ex.Message}";
         }
     }
+    private async Task ShowSweetAlert(bool isSuccess, string successMessage, string errorMessage)
+    {
+        if (isSuccess)
+        {
+            await JSRuntime.InvokeVoidAsync("Swal.fire", "Thành công", successMessage, "success");
+        }
+        else
+        {
+            await JSRuntime.InvokeVoidAsync("Swal.fire", "Thất bại", errorMessage, "error");
+        }
+    }
+
 
 }
 

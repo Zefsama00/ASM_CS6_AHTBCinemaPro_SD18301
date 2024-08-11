@@ -30,5 +30,6 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Model
 
         [StringLength(50, ErrorMessage = "Trạng Thái không được vượt quá 50 ký tự.")]
         public string TrangThai { get; set; }
+        public string IdTheLoai { get; set; }
     }
 }

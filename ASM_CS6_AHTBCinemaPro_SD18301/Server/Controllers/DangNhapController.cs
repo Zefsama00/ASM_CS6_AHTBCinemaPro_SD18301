@@ -14,20 +14,23 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using Microsoft.Extensions.Configuration;
 using ASM_CS6_AHTBCinemaPro_SD18301.Shared.Models;
+using ASM_CS6_AHTBCinemaPro_SD18301.Client.Service;
 
 namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
 {
+        
     [Route("api/[controller]")]
     [ApiController]
     public class DangNhapController : ControllerBase
     {
         private readonly DBCinemaContext _context;
         private readonly IConfiguration _configuration;
-
-        public DangNhapController(DBCinemaContext context, IConfiguration configuration)
+        private readonly EmailService _emailService;
+        public DangNhapController(DBCinemaContext context, IConfiguration configuration, EmailService emailService)
         {
             _context = context;
             _configuration = configuration;
+            _emailService = emailService;
         }
 
         private string GetMd5Hash(string input)
@@ -45,7 +48,17 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
                 return sb.ToString();
             }
         }
-
+        private string GeneratePassword(int length)
+        {
+            const string valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+            StringBuilder res = new StringBuilder();
+            Random rnd = new Random();
+            while (0 < length--)
+            {
+                res.Append(valid[rnd.Next(valid.Length)]);
+            }
+            return res.ToString();
+        }
         [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] KhachHang khachHang)
         {
@@ -107,6 +120,36 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
             }
 
             return BadRequest(ModelState);
+        }
+        [HttpPost("forget-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgetPasswordRequest request)
+        {
+            if (string.IsNullOrEmpty(request.Email))
+            {
+                return BadRequest("Xảy ra lỗi ở request");
+            }
+            var khachHang = await _context.KhachHangs.FirstOrDefaultAsync(k => k.Email == request.Email);
+            if (khachHang == null)
+            {
+                return NotFound("khachHang không tồn tại.");
+
+            }
+
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.IdUser  == khachHang.IDUser);
+            if (user == null)
+            {
+                return NotFound("User không tồn tại.");
+            }
+            string newPassword = GeneratePassword(8);
+            user.PassWord = GetMd5Hash(newPassword);
+            khachHang.Password = GetMd5Hash(newPassword);
+            _context.Users.Update(user);
+            _context.KhachHangs.Update(khachHang);
+            await _context.SaveChangesAsync();
+
+            await _emailService.SendEmailAsync(khachHang.Email, "Quên mật khẩu", $"Mật khẩu mới của bạn là: {newPassword}");
+
+            return Ok("Mật khẩu mới đã được gửi qua email.");
         }
 
 

@@ -1,5 +1,7 @@
 ﻿using ASM_CS6_AHTBCinemaPro_SD18301.Data;
+using ASM_CS6_AHTBCinemaPro_SD18301.Model;
 using ASM_CS6_AHTBCinemaPro_SD18301.Models;
+using ASM_CS6_AHTBCinemaPro_SD18301.Shared.Models;
 using ASM_CS6_AHTBCinemaPro_SD18301.Shared.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +22,26 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
         {
             _context = context;
         }
-
+        [HttpGet]
+        [Route("Suatchieu")]
+        public async Task<ActionResult<List<PhongVeGhe>>> GetSuatChieus()
+        {
+            var giochieu = await _context.GioChieus
+               .Include(g => g.CaChieus)
+                    .ThenInclude(c => c.Phims)
+                .Include(g => g.CaChieus)
+                    .ThenInclude(c => c.Phongs)
+                    .Select(s => new PhongVeGhe
+                    {
+                        idsuatchieu = s.IdGioChieu,
+                        tensuatchieu = s.CaChieus.Phims.TenPhim + " - " + " Số phòng " + s.CaChieus.Phongs.SoPhong + " - " + s.CaChieus.NgayChieuPhim.ToString("dd/MM/yyyy"),
+                        phong = s.CaChieus.Phong,
+                    })
+                .ToListAsync();
+            
+            return Ok(giochieu);
+            
+        }
         [HttpGet]
         public async Task<IActionResult> GetGioChieus()
         {

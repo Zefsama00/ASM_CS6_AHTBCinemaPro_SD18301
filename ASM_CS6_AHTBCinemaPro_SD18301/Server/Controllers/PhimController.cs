@@ -10,6 +10,9 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.ValueGeneration;
 using ASM_CS6_AHTBCinemaPro_SD18301.Model;
 using ASM_CS6_AHTBCinemaPro_SD18301.Shared.Models;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
 
 namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
 {
@@ -18,10 +21,12 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
     public class PhimController : ControllerBase
     {
         private readonly DBCinemaContext _context;
+        private readonly IWebHostEnvironment _environment;
 
-        public PhimController(DBCinemaContext context)
+        public PhimController(DBCinemaContext context, IWebHostEnvironment environment)
         {
             _context = context;
+            _environment = environment;
         }
 
         // GET: api/Phim/chuachieu
@@ -70,7 +75,7 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
             try
             {
                 var dsphim = await _context.Phims
-                    .Include(p => p.LoaiPhim) 
+                    .Include(p => p.LoaiPhim)
                     .Select(p => new PhimVM
                     {
                         IdPhim = p.IdPhim,
@@ -78,6 +83,7 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
                         DienVien = p.DienVien,
                         DangPhim = p.DangPhim,
                         TheLoai = p.LoaiPhim.TenLoai,
+                        IdTheLoai = p.TheLoai,
                         ThoiLuong = p.ThoiLuong,
                         HinhAnh = p.HinhAnh,
                     })
@@ -108,7 +114,31 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
 
             return Ok(phim);
         }
+        [HttpPost("upload-image")]
+        public async Task<IActionResult> UploadImage([FromForm] IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("No file uploaded.");
+            }
 
+            var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/image/Phim2");
+
+            if (!Directory.Exists(uploadPath))
+            {
+                Directory.CreateDirectory(uploadPath);
+            }
+
+            var fileName = Path.GetFileName(file.FileName);
+            var filePath = Path.Combine(uploadPath, fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            return Ok(new { FileName = fileName }); // Trả về chỉ tên tệp
+        }
         // POST: api/Phim
         [HttpPost]
         [Route("AddPhim")]
@@ -123,25 +153,39 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
             {
                 return BadRequest("ID Phim đã tồn tại.");
             }
+
+            // Lấy giá trị Id lớn nhất trong bảng LoaiPhims
+            var maxId = _context.LoaiPhims
+                .OrderByDescending(lp => lp.IdLP)
+                .FirstOrDefault()?.IdLP;
+
+            // Nếu bảng chưa có dữ liệu, đặt Id là 1, ngược lại tăng giá trị lên 1
+            int nextIdNumber = 1;
+            if (maxId != null && maxId.Length > 2 && int.TryParse(maxId.Substring(2), out int currentMaxId))
+            {
+                nextIdNumber = currentMaxId + 1;
+            }
+            string idloaiPhims = "LP" + nextIdNumber;
+            // Tạo IdLP mới theo định dạng "LP" + số Id
+            var theloai = new LoaiPhim
+            {
+                IdLP = idloaiPhims,
+                TenLoai = phimvm.TheLoai
+            };
+
+            _context.LoaiPhims.Add(theloai);
+            await _context.SaveChangesAsync();
+
             var phim = new Phim
             {
                 IdPhim = phimvm.IdPhim,
                 TenPhim = phimvm.TenPhim,
                 ThoiLuong = phimvm.ThoiLuong,
-                TheLoai = phimvm.TheLoai,
+                TheLoai = idloaiPhims,
                 DienVien = phimvm.DienVien,
                 HinhAnh = phimvm.HinhAnh,
                 DangPhim = phimvm.DangPhim,
             };
-            //var theloai = await _context.LoaiPhims.FirstOrDefaultAsync(x => x.TenLoai == phim.TheLoai);
-
-            //if (theloai == null)
-            //{
-            //    return BadRequest("Thể loại không tồn tại.");
-            //}
-
-            //phim.TheLoai = theloai.IdLP;
-
 
             _context.Phims.Add(phim);
             await _context.SaveChangesAsync();
@@ -165,18 +209,7 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdatePhim(string id, [FromBody] PhimVM updatedPhimVM)
         {
-            // Check if the record with the provided ID exists
-            //if (!await _context.Phims.AnyAsync(e => e.IdPhim == id))
-            //{
-            //    return BadRequest("ID không tồn tại.");
-            //}
 
-            //// Find the movie genre (LoaiPhim) by name
-            //var theloai = await _context.LoaiPhims.FirstOrDefaultAsync(x => x.TenLoai == updatedPhimVM.TheLoai);
-            //if (theloai == null)
-            //{
-            //    return BadRequest("Thể loại không tồn tại.");
-            //}
 
             // Retrieve the existing movie (Phim) entity
             var existingPhim = await _context.Phims.FindAsync(id);
@@ -184,12 +217,16 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
             {
                 return NotFound();
             }
+            var Loaip = _context.LoaiPhims.FirstOrDefault(x => x.IdLP == updatedPhimVM.IdTheLoai);
+            if (Loaip != null)
+            {
+                Loaip.TenLoai = updatedPhimVM.TheLoai;
+                await _context.SaveChangesAsync();
+            }
 
-            // Update the existing Phim entity with the new values
             existingPhim.TenPhim = updatedPhimVM.TenPhim;
             existingPhim.DienVien = updatedPhimVM.DienVien;
             existingPhim.DangPhim = updatedPhimVM.DangPhim;
-            existingPhim.TheLoai = updatedPhimVM.TheLoai; // Update to the correct LoaiPhim ID
             existingPhim.ThoiLuong = updatedPhimVM.ThoiLuong;
             existingPhim.HinhAnh = updatedPhimVM.HinhAnh;
 

@@ -55,8 +55,23 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
                 return BadRequest(ModelState);
             }
 
+            // Kiểm tra email có trùng lặp hay không
+            bool emailExists = await _context.NhanViens.AnyAsync(nv => nv.Email == nhanVien.Email);
+            if (emailExists)
+            {
+                return BadRequest(new { message = "Email này đã được sử dụng." });
+            }
+
+            // Kiểm tra số điện thoại có trùng lặp hay không
+            bool sdtExists = await _context.NhanViens.AnyAsync(nv => nv.SDT == nhanVien.SDT);
+            if (sdtExists)
+            {
+                return BadRequest(new { message = "Số điện thoại này đã được sử dụng." });
+            }
+
             try
             {
+                // Tạo ID cho User mới
                 string lastIdUser = await _context.Users.OrderByDescending(u => u.IdUser).Select(u => u.IdUser).FirstOrDefaultAsync();
                 int nextIdUser = (lastIdUser == null) ? 1 : int.Parse(lastIdUser.Substring(2)) + 1;
 
@@ -71,6 +86,7 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
 
+                // Tạo ID cho Nhân viên mới
                 string lastIdNV = await _context.NhanViens.OrderByDescending(nv => nv.IdNV).Select(nv => nv.IdNV).FirstOrDefaultAsync();
                 int nextIdNV = (lastIdNV == null) ? 1 : int.Parse(lastIdNV.Substring(2)) + 1;
                 nhanVien.IdNV = "NV" + nextIdNV.ToString("D2");
@@ -87,6 +103,7 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
                 return StatusCode(500, new { message = "Đã xảy ra lỗi khi lưu dữ liệu. Vui lòng thử lại sau.", error = ex.Message });
             }
         }
+
 
         // PUT: api/NhanVien/{id}
         [HttpPut("{id}")]

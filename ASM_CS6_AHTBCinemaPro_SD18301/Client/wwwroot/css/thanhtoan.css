@@ -1,0 +1,85 @@
+﻿.flip-card {
+    background-color: transparent;
+    width: 270px; /* Điều chỉnh kích thước thẻ */
+    height: 170px; /* Điều chỉnh kích thước thẻ */
+    perspective: 1000px; /* Hiệu ứng 3D */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto; /* Đưa phần tử ra giữa màn hình */
+}
+
+.flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transform-style: preserve-3d;
+    animation: flip 10s infinite linear; /* Tạo hiệu ứng lật liên tục */
+}
+
+.flip-card-front, .flip-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden; /* Ẩn mặt sau khi chưa lật */
+    border-radius: 12px; /* Điều chỉnh bo góc thẻ */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Điều chỉnh đổ bóng */
+    padding: 15px; /* Điều chỉnh padding */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.flip-card-front {
+    background-color: #333;
+    color: white;
+}
+
+.flip-card-back {
+    background-color: #555;
+    color: white;
+    transform: rotateY(180deg);
+}
+
+@keyframes flip {
+    0% {
+        transform: rotateY(0deg);
+    }
+
+    50% {
+        transform: rotateY(180deg);
+    }
+
+    100% {
+        transform: rotateY(360deg);
+    }
+}
+
+.bank-name {
+    font-size: 1.1rem; /* Điều chỉnh kích thước font */
+    margin-bottom: 10px; /* Điều chỉnh khoảng cách */
+    font-weight: bold;
+}
+
+.card-number {
+    font-size: 1.3rem; /* Điều chỉnh kích thước font */
+    letter-spacing: 1.5px; /* Điều chỉnh khoảng cách giữa các ký tự */
+    margin-bottom: 10px; /* Điều chỉnh khoảng cách */
+    white-space: nowrap; /* Ngăn không cho số thẻ chia thành nhiều hàng */
+}
+
+.card-holder,
+.expiry-date {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem; /* Điều chỉnh kích thước font */
+    width: 100%; /* Đảm bảo phần tử không bị co lại */
+    margin-top: 8px; /* Điều chỉnh khoảng cách */
+}
+
+.holder-name,
+.expiry {
+    font-weight: bold;
+}

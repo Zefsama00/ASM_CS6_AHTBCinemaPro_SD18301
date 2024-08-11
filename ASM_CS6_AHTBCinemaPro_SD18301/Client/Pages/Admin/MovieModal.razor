@@ -1,0 +1,125 @@
+﻿@using ASM_CS6_AHTBCinemaPro_SD18301.Model
+@using ASM_CS6_AHTBCinemaPro_SD18301.Models
+@using System.Text
+@code {
+    [Parameter] public PhimVM Movie { get; set; }
+    [Parameter] public bool IsEditMode { get; set; }
+    [Parameter] public EventCallback<InputFileChangeEventArgs> OnImageSelected { get; set; }
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+
+    private List<Category> categories = new List<Category>
+    {
+        new Category { Name = "Hành động" },
+        new Category { Name = "Hài hước" },
+        new Category { Name = "Kinh dị" },
+        new Category { Name = "Lãng mạn" },
+        new Category { Name = "Drama" },
+        new Category { Name = "Phim hoạt hình" },
+        new Category { Name = "3D" },
+        new Category { Name = "Phép thuật" },
+        new Category { Name = "Trinh thám" },
+
+    };
+
+    protected override void OnParametersSet()
+    {
+        if (!string.IsNullOrEmpty(Movie.TheLoai))
+        {
+            var selectedCategories = Movie.TheLoai.Split(", ");
+            foreach (var category in categories)
+            {
+                category.IsSelected = selectedCategories.Contains(category.Name);
+            }
+        }
+    }
+
+    private void OnCheckboxChange(ChangeEventArgs e, Category category)
+    {
+        category.IsSelected = (bool)e.Value;
+
+        StringBuilder selected = new StringBuilder();
+        foreach (var item in categories)
+        {
+            if (item.IsSelected)
+            {
+                if (selected.Length > 0)
+                    selected.Append(", ");
+                selected.Append(item.Name);
+            }
+        }
+        Movie.TheLoai = selected.ToString();
+    }
+
+    private class Category
+    {
+        public string Name { get; set; }
+        public bool IsSelected { get; set; }
+    }
+}
+
+<EditForm Model="Movie" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="modal fade" id="@(IsEditMode ? "editModal" : "addModal")" tabindex="-1" aria-labelledby="@(IsEditMode ? "editModalLabel" : "addModalLabel")" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="@(IsEditMode ? "editModalLabel" : "addModalLabel")">
+                        @(IsEditMode ? "Cập Nhật Phim" : "Thêm Phim Mới")
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="tenPhim" class="form-label">Tên Phim</label>
+                        <InputText id="tenPhim" class="form-control" @bind-Value="Movie.TenPhim" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="theLoai" class="form-label">Thể Loại</label>
+                        @foreach (var item in categories)
+                        {
+                            <div>
+<input type="checkbox" checked="@item.IsSelected" @onchange="e => OnCheckboxChange(e, item)" />
+                                <label>@item.Name</label>
+                            </div>
+                        }
+                        <Input style="width:100%" type="text" value="@Movie.TheLoai" readonly />
+                    </div>
+                    <div class="mb-3">
+                        <label for="dienVien">Diễn viên:</label>
+                        <InputText id="dienVien" class="form-control" @bind-Value="Movie.DienVien" />
+                        <ValidationMessage For="@(() => Movie.DienVien)" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="thoiLuong" class="form-label">Thời Lượng</label>
+                        <InputNumber id="thoiLuong" class="form-control" @bind-Value="Movie.ThoiLuong" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="DangPhim">Dạng Phim:</label>
+                        <InputSelect id="DangPhim" class="form-control" @bind-Value="Movie.DangPhim">
+                            <option value="JS">Cho trẻ em</option>
+                            <option value="16+">Cho người vị thành niên</option>
+                            <option value="18+">Cho người lớn</option>
+                        </InputSelect>
+                        <ValidationMessage For="@(() => Movie.DangPhim)" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="imageUpload" class="form-label">Hình Ảnh</label>
+                        <InputFile OnChange="OnImageSelected" />
+                        @if (!string.IsNullOrEmpty(Movie.HinhAnh))
+                        {
+                            <img src="Image/phim2/@Movie.HinhAnh" alt="Uploaded Image" class="img-fluid mt-2" style="max-width: 100px; height: auto;" />
+                        }
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary">
+                        @(IsEditMode ? "Cập Nhật" : "Thêm Phim")
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</EditForm>
