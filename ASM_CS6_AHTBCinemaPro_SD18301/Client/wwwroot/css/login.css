@@ -2,7 +2,7 @@
     width: 700px;
     height: 700px;
     overflow: hidden;
-    background: url(image/anhnen.jpg) no-repeat center / cover;
+    background: url(Image/anhnen.jpg) no-repeat center / cover;
     border-radius: 10px;
     box-shadow: 5px 20px 50px #000;
 }
@@ -51,7 +51,7 @@ label {
 }
 .login {
     height: 660px;
-    background: url(image/brlogin.jpg) no-repeat center / cover;
+    background: url(Image/brlogin.jpg) no-repeat center / cover;
     border-radius: 60%/10%;
     transform: translateY(-150px);
     transition: .8s ease-in-out;

@@ -4,8 +4,10 @@
 @using ASM_CS6_AHTBCinemaPro_SD18301.Models
 @using ASM_CS6_AHTBCinemaPro_SD18301.Shared.Models
 @using System.Text.Json
+@using Microsoft.EntityFrameworkCore.Metadata.Internal
 @using Newtonsoft.Json
 @using Newtonsoft.Json.Serialization
+@using System.Text
 
 @page "/thanhtoan"
 @{
@@ -336,10 +338,9 @@
     private string phimTen = string.Empty;
     private bool isLoading = true;
     private string errorMessage = string.Empty;
-
+    private bool _isUpdating = false;
     protected override async Task OnInitializedAsync()
     {
-        // Phân tích chuỗi truy vấn
         var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
         var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
 
@@ -349,19 +350,14 @@
         IdGioChieu = int.Parse(query["idGioChieu"]);
         TotalPrice = int.Parse(query["totalPrice"]);
 
-        isLoading = true; // Bắt đầu quá trình tải dữ liệu
+        isLoading = true;
 
         try
         {
-            // Kiểm tra ID ghế và phim
-            Console.WriteLine($"ID ghế: {SeatId}, ID phim: {IdPhim}, ID ngày chiếu: {IdCaChieu}");
-
-            // Gọi API để lấy thông tin từ Multimodel
             var response = await Http.GetAsync($"api/ChiTiet/GetChiTiet/{IdPhim}");
             if (response.IsSuccessStatusCode)
             {
                 var jsonResponse = await response.Content.ReadAsStringAsync();
-
                 var settings = new JsonSerializerSettings
                     {
                         PreserveReferencesHandling = PreserveReferencesHandling.Objects,
@@ -387,14 +383,54 @@
         }
         finally
         {
-            isLoading = false; // Kết thúc quá trình tải dữ liệu
+            isLoading = false;
         }
     }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             await JS.InvokeVoidAsync("initializeCheckout", TotalPrice);
         }
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!string.IsNullOrEmpty(SeatId) && !_isUpdating)
+        {
+            _isUpdating = true;
+            await UpdateSeatStatus();
+        }
+    }
+
+    private async Task UpdateSeatStatus()
+    {
+        try
+        {
+            var response = await Http.PutAsJsonAsync($"api/Ghes/SetPendingPaymentStatus/{SeatId}", "Đã đặt");
+            if (response.IsSuccessStatusCode)
+            {
+                // Handle successful update if needed
+            }
+            else
+            {
+                var errorMsg = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Failed to update status: {errorMsg}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error updating seat status: {ex.Message}");
+        }
+        finally
+        {
+            _isUpdating = false;
+        }
+    }
+
+    private async Task OnPaymentSuccess()
+    {
+        await UpdateSeatStatus();
+        await JS.InvokeVoidAsync("Swal.fire", "Thanh toán thành công", "Trạng thái ghế đã được cập nhật.", "success");
     }
 }

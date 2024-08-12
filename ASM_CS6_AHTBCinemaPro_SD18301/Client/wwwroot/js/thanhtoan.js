@@ -3,7 +3,7 @@
 };
 
 window.initializeCheckout = (totalAmount) => {
-    console.log('initializeCheckout called with totalAmount:', totalAmount);
+    console.log('Initializing checkout with totalAmount:', totalAmount);
     paypal.Buttons({
         style: {
             layout: 'vertical',
@@ -28,24 +28,19 @@ window.initializeCheckout = (totalAmount) => {
         onApprove: function (data, actions) {
             return actions.order.capture().then(function (details) {
                 console.log('Order approved:', details);
-                DotNet.invokeMethodAsync('ASM_CS6_AHTBCinemaPro_SD18301', 'OnPaypalPaymentSuccess', details);
-                // Hiển thị thông báo thành công và chuyển hướng về trang chủ
+                DotNet.invokeMethodAsync('ASM_CS6_AHTBCinemaPro_SD18301', 'OnPaymentSuccess', details);
                 Swal.fire({
-                    title: 'Thành công!',
-                    text: 'Thanh toán đã được xử lý thành công.',
+                    title: 'Success!',
+                    text: 'Payment has been processed successfully.',
                     icon: 'success',
                     confirmButtonText: 'OK'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = '/';  // Đổi thành URL trang chủ của bạn nếu khác
-                    }
+                }).then(() => {
+                    window.location.href = '/';
                 });
             });
         }
     }).render('#paypal-button-container');
 };
-
-
 
 
 window.processPaypalPayment = (orderModel) => {

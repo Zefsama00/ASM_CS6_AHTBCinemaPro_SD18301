@@ -5,7 +5,8 @@ html, body {
 }
 
 a, .btn-link {
-    color: #0366d6;
+    color: white;
+    text-decoration: none;
 }
 
 .btn-primary {

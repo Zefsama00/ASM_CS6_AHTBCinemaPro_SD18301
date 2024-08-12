@@ -159,14 +159,25 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
                 .OrderByDescending(lp => lp.IdLP)
                 .FirstOrDefault()?.IdLP;
 
-            // Nếu bảng chưa có dữ liệu, đặt Id là 1, ngược lại tăng giá trị lên 1
             int nextIdNumber = 1;
             if (maxId != null && maxId.Length > 2 && int.TryParse(maxId.Substring(2), out int currentMaxId))
             {
                 nextIdNumber = currentMaxId + 1;
             }
-            string idloaiPhims = "LP" + nextIdNumber;
-            // Tạo IdLP mới theo định dạng "LP" + số Id
+
+            string idloaiPhims;
+            bool idExists;
+
+            do
+            {
+                idloaiPhims = "LP" + nextIdNumber;
+                idExists = _context.LoaiPhims.Any(lp => lp.IdLP == idloaiPhims);
+                if (idExists)
+                {
+                    nextIdNumber++;
+                }
+            } while (idExists);
+
             var theloai = new LoaiPhim
             {
                 IdLP = idloaiPhims,
@@ -189,7 +200,6 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
 
             _context.Phims.Add(phim);
             await _context.SaveChangesAsync();
-
 
             var danhMucPhim = new DanhMucPhim
             {

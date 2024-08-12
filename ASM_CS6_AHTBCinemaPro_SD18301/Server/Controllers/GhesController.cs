@@ -7,6 +7,8 @@ using ASM_CS6_AHTBCinemaPro_SD18301.Models;
 using ASM_CS6_AHTBCinemaPro_SD18301.Data;
 using ASM_CS6_AHTBCinemaPro_SD18301.Shared.ViewModels;
 using System.Net.NetworkInformation;
+using System;
+using ASM_CS6_AHTBCinemaPro_SD18301.Shared.Models;
 
 namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
 {
@@ -150,52 +152,40 @@ namespace ASM_CS6_AHTBCinemaPro_SD18301.Server.Controllers
 
             return NoContent();
         }
-        [HttpPut("UpdateStatusToBooked/{id}")]
-        public async Task<IActionResult> UpdateStatusToBooked(string id)
-        {
-            var seat = await _context.Ghes.FindAsync(id);
-            if (seat == null)
-            {
-                return NotFound();
-            }
 
-            seat.TrangThai = "Đã đặt";
-            _context.Entry(seat).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
 
-            return NoContent();
-        }
+
 
         [HttpPut("SetPendingPaymentStatus/{id}")]
         public async Task<IActionResult> SetPendingPaymentStatus(string id, [FromBody] string trangThai)
         {
+            if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(trangThai))
+            {
+                return BadRequest("Invalid input parameters.");
+            }
+
             var ghe = await _context.Ghes.FindAsync(id);
             if (ghe == null)
             {
-                return NotFound(new { success = false, message = "Ghế không tồn tại." });
+                return NotFound($"Seat with id {id} not found.");
             }
 
-            // Update the seat status to "Đang chờ thanh toán"
             ghe.TrangThai = trangThai;
             _context.Entry(ghe).State = EntityState.Modified;
 
             try
             {
                 await _context.SaveChangesAsync();
+                return Ok("Seat status updated successfully.");
             }
             catch (DbUpdateConcurrencyException)
             {
                 if (!GheExists(id))
                 {
-                    return NotFound(new { success = false, message = "Ghế không tồn tại." });
+                    return NotFound($"Seat with id {id} not found.");
                 }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
-
-            return Ok(new { success = true, message = "Trạng thái ghế đã được cập nhật thành công." });
         }
 
         private bool GheExists(string id)

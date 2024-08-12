@@ -27,7 +27,7 @@
     
         phims = phims.Where(p => p.DanhMucPhim.Any(dm => dm.DanhMuc.TenDanhMuc == "Phim Mới")).ToList();
         phimhot = phimhot.Where(p => p.DanhMucPhim.Any(dm => dm.DanhMuc.TenDanhMuc == "Phim Hot")).ToList();
-        phimhoathinh = phimhoathinh.Where(p => p.TheLoai == "LP8").ToList();
+        phimhoathinh = phimhoathinh.Where(p => p.DanhMucPhim.Any(dm => dm.DanhMuc.TenDanhMuc == "Phim Hoạt Hình")).ToList();
 
         await JSRuntime.InvokeVoidAsync("initOwlCarousel");
     }
@@ -41,7 +41,7 @@
         else
         {
             var phimCount = 6;
-            var displayedPhims = phims.Take(phimCount).ToList();
+            var displayedPhims = phims.Where(p => p.DanhMucPhim.Any(dm => dm.DanhMuc.IdDanhMuc == 4)).ToList();
 
             @for (var i = 0; i < displayedPhims.Count; i++)
             {
